@@ -4,38 +4,32 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
-using ShopFileSystems;
 
 namespace Shop
 {
     class Shop : IShop
     {
-        private List<ShopLot> shopLots;
+        private List<IShopLot> shopLots;
 
         public Shop()
         {
-            List<String> shopFiles;
-            shopFiles = ShopFileSystem.GetAllFiles(".safer");
-            shopLots = new List<ShopLot>(shopFiles.Count);
-            for (Int32 i = 0; i < shopLots.Count; i++)
-            {
-                shopLots[i] = new ShopLot(shopFiles[i]);
-                shopLots[i].LoadShopLot();
-            }
+            
         }
 
         public void AddShopLot(IShopLot shopLot)
         {
-            if (shopLot is ShopLot)
-            {
-                shopLots.Add(shopLot as ShopLot);
-            }
-            else throw new ArgumentException("IShopLot must be ShopLot", shopLot.ToString());
+            
         }
 
         public void RemoveShopLot(IShopLot shopLot)
         {
 
+        }
+
+        public List<String> GetShopLots()
+        {
+            List<String> result = new List<String>();
+            return result;
         }
     }
 
@@ -67,10 +61,7 @@ namespace Shop
 
         public void LoadShopLot()
         {
-            ShopFileSystemData data;
-            data = ShopFileSystem.LoadFromFile(Name, ".safer");
-            if (data.data.Length != 3) throw new InvalidDataException("must be 3 filds");
-
+            
         }
 
         public void SaveShopLot()
@@ -101,7 +92,7 @@ namespace Shop
 
         void RemoveShopLot(IShopLot shopLot);
 
-        List<IShopLot> GetShopLots();
+        List<String> GetShopLots();
 
 
     }
