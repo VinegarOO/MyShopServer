@@ -4,24 +4,36 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Drawing;
 
-namespace Shop
+namespace ShopForServer
 {
     class Shop : IShop
     {
-        private List<IShopLot> shopLots;
+        private List<IShopLot> lots = new List<IShopLot>();
 
         public Shop()
         {
             
         }
 
-        public void AddShopLot(IShopLot shopLot)
+        public void AddShopLot(IShopLot lot)
         {
             
         }
 
-        public void RemoveShopLot(IShopLot shopLot)
+        public void AddShopLot(String lot_path)
+        {
+
+        }
+
+        public void AddShopLot(Stream stream)
+        {
+
+        }
+
+        public void RemoveShopLot(IShopLot lot)
         {
 
         }
@@ -31,69 +43,90 @@ namespace Shop
             List<String> result = new List<String>();
             return result;
         }
+
+        public void SaveIShop(Stream stream)
+        {
+
+        }
     }
 
+    [Serializable]
     class ShopLot : IShopLot
     {
-        public String Name { get; private set; }
-        public Double Price { get; private set; }
+        private String name;
+        public String Name { get { return name; } }
+        private Double price;
+        public Double Price { get { return price; } }
         private String about;
-        private Byte[] picture;
+        public String About { get { return about; } }
+        private Image picture;
+        public Image Picture { get { return picture; } }
 
-        public ShopLot(String name)
+        public ShopLot(String t_name, String picture_path, String t_about, Double t_price)
         {
-            Name = name;
+            name = t_name;
+
+            picture = Image.FromFile(picture_path);
+
+            if (t_price > 0) price = t_price;
+            else throw new ArgumentException("price might be grater than zero", price.ToString());
+
+            about = t_about;
         }
 
-        public void FillShopLot(Double price, String picture_path, String t_about)
+        public void EditPicture(String picture_path)
         {
-            if (price > 0) Price = price;
-            else throw new ArgumentException("price must be greater than 0", new Exception(price.ToString()));
-            FileInfo fl = new FileInfo(picture_path);
-            picture = new Byte[fl.Length];
-            using (FileStream pic = new FileStream(picture_path, FileMode.Open))
-            {
-                pic.Read(picture, 0, (Int32)fl.Length);
-            };
-            fl.Delete();
-            this.about = t_about;
+            picture = Image.FromFile(picture_path);
         }
 
-        public void LoadShopLot()
+        public void EditPrice(Double t_price)
         {
-            
+            if (t_price > 0) price = t_price;
+            else throw new ArgumentException("price might be grater than zero", price.ToString());
         }
 
-        public void SaveShopLot()
+        public void EditAbout(String t_about)
         {
-            
+            about = t_about;
         }
     }
 
     interface IShopLot
     {
-        void LoadShopLot();
+        String Name { get; }
+        Double Price { get; }
+        String About { get; }
+        Image Picture { get; }
 
-        void SaveShopLot();
+        void EditPicture(String picture_path);
+
+        void EditPrice(Double t_price);
+
+        void EditAbout(String t_about);
     }
 
     interface IAccount
     {
         void ChangePassword(String password);
 
-        void LoadAccout();
+        void EditAbout(String about);
 
-        void SaveAccout();
+        Int32 GetWeight();
     }
 
     interface IShop
     {
-        void AddShopLot(IShopLot shopLot);
+        void AddShopLot(IShopLot lot);
 
-        void RemoveShopLot(IShopLot shopLot);
+        void AddShopLot(String lot_path);
+
+        void AddShopLot(Stream stream);
+
+        void RemoveShopLot(IShopLot lot);
 
         List<String> GetShopLots();
 
+        void SaveIShop(Stream stream);
 
     }
 }
