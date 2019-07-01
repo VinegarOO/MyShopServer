@@ -12,7 +12,7 @@ namespace MyShopServerMain
             
             while (true)
             {
-                Dictionary<String, Action> comands = new Dictionary<string, Action>
+                Dictionary<string, Action> comands = new Dictionary<string, Action>
                 {
                     {"start", new Action(Start) },
                     {"exit", new Action(Exit) },
@@ -24,7 +24,7 @@ namespace MyShopServerMain
                 };
 
                 Console.WriteLine("Waiting for comand" + Environment.NewLine);
-                String[] comand = Console.ReadLine().Split();
+                string[] comand = Console.ReadLine().Split();
 
                 if (comands.ContainsKey(comand[0]))
                 {
@@ -69,7 +69,7 @@ namespace MyShopServerMain
 
         public static void Help()
         {
-            List<String> help = new List<String> { "start - starting server", "add - add new lot",
+            List<string> help = new List<string> { "start - starting server", "add - add new lot",
                 "edit - edit lot", "exit - close console", "stop - stop the server",
                 "inspect - show info about lot" };
 
