@@ -77,6 +77,8 @@ namespace MyShopServerMain
             {
                 Console.WriteLine(h);
             }
+
+            Console.WriteLine(Environment.NewLine);
         }
     }
 }

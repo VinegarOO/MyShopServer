@@ -24,7 +24,14 @@ namespace ShopForServer
         {
             if (!lots.Contains(lot))
             {
-                lots.Add(lot);
+                if(this.GetLotByName(lot.Name) != null)
+                {
+                    lots.Add(lot);
+                }
+                else
+                {
+                    throw new ArgumentException("Shop lot name is already exists", lot.Name);
+                }
             }
             else
             {
@@ -47,7 +54,14 @@ namespace ShopForServer
 
             if (!lots.Contains(lot))
             {
-                lots.Add(lot);
+                if (this.GetLotByName(lot.Name) != null)
+                {
+                    lots.Add(lot);
+                }
+                else
+                {
+                    throw new ArgumentException("Shop lot name is already exists", lot.Name);
+                }
             }
             else
             {
@@ -73,7 +87,14 @@ namespace ShopForServer
 
             if (!lots.Contains(lot))
             {
-                lots.Add(lot);
+                if (this.GetLotByName(lot.Name) != null)
+                {
+                    lots.Add(lot);
+                }
+                else
+                {
+                    throw new ArgumentException("Shop lot name is already exists", lot.Name);
+                }
             }
             else
             {
@@ -117,15 +138,13 @@ namespace ShopForServer
             return ms;
         }
 
-        public IShopLot[] GetLotByName(string name)
+        public IShopLot GetLotByName(string name)
         {
-            IShopLot[] result;
-            List<IShopLot> temp = new List<IShopLot>();
+            IShopLot result = null;
             foreach(var t in lots)
             {
-                if (t.Name == name) temp.Add(t);
+                if (t.Name == name) result = t;
             }
-            result = temp.ToArray();
             return result;
         }
 
@@ -225,7 +244,7 @@ namespace ShopForServer
 
         MemoryStream SaveIShop();
 
-        IShopLot[] GetLotByName(string name);
+        IShopLot GetLotByName(string name);
 
 
     }
