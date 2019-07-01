@@ -158,7 +158,7 @@ namespace ShopForServer
             }
             foreach(var t in temp)
             {
-                result = String.Concat(t.ToString());
+                result += (t + Environment.NewLine);
             }
             return result;
         }
