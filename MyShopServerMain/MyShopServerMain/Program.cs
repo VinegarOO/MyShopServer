@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ShopForServer;
+using ShopServer;
 using System.IO;
 
 namespace MyShopServerMain
 {
-    class Program
+    internal class Program
     {
-        static void Main()
+        private static void Main()
         {
+            
             UserInterface.Menu();
-            Console.ReadKey(true);
         }
     }
 }

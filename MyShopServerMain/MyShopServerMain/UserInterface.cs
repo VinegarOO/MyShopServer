@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using ShopServer;
 
 namespace MyShopServerMain
 {
@@ -22,7 +23,6 @@ namespace MyShopServerMain
                     {"stop", new Action(Stop) },
                     {"help", new Action(Help) }
                 };
-
                 Console.WriteLine("Waiting for comand" + Environment.NewLine);
                 string[] comand = Console.ReadLine().Split();
 

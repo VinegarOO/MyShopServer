@@ -8,25 +8,25 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Drawing;
 
 
-namespace ShopForServer
+namespace ShopServer
 {
     [Serializable]
-    class Shop : IShop
+    internal class Shop : IShop, IAccountHolder
     {
-        private List<IShopLot> lots;
+        private List<ShopLot> _lots;
 
         public Shop()
         {
-            lots = new List<IShopLot>();
+            _lots = new List<ShopLot>();
         }
 
-        public void AddShopLot(IShopLot lot)
+        public void AddShopLot(ShopLot lot)
         {
-            if (!lots.Contains(lot))
+            if (!_lots.Contains(lot))
             {
-                if(this.GetLotByName(lot.Name) != null)
+                if(this.GetShopLot(lot.Name) != null)
                 {
-                    lots.Add(lot);
+                    _lots.Add(lot);
                 }
                 else
                 {
@@ -42,21 +42,21 @@ namespace ShopForServer
         public void AddShopLot(Stream stream)
         {
             BinaryFormatter bf = new BinaryFormatter();
-            IShopLot lot;
+            ShopLot lot;
             try
             {
-                lot = (IShopLot)bf.Deserialize(stream);
+                lot = (ShopLot)bf.Deserialize(stream);
             }
             catch(Exception e)
             {
                 throw e;
             }
 
-            if (!lots.Contains(lot))
+            if (!_lots.Contains(lot))
             {
-                if (this.GetLotByName(lot.Name) != null)
+                if (this.GetShopLot(lot.Name) != null)
                 {
-                    lots.Add(lot);
+                    _lots.Add(lot);
                 }
                 else
                 {
@@ -69,15 +69,15 @@ namespace ShopForServer
             }
         }
 
-        public void AddShopLot(string lot_path)
+        public void AddShopLot(string lotPath)
         {
             BinaryFormatter bf = new BinaryFormatter();
-            IShopLot lot;
+            ShopLot lot;
             try
             {
-                using (FileStream fs = new FileStream(lot_path, FileMode.Open))
+                using (FileStream fs = new FileStream(lotPath, FileMode.Open))
                 {
-                    lot = (IShopLot)bf.Deserialize(fs);
+                    lot = (ShopLot)bf.Deserialize(fs);
                 }
             }
             catch (Exception e)
@@ -85,11 +85,11 @@ namespace ShopForServer
                 throw e;
             }
 
-            if (!lots.Contains(lot))
+            if (!_lots.Contains(lot))
             {
-                if (this.GetLotByName(lot.Name) != null)
+                if (this.GetShopLot(lot.Name) != null)
                 {
-                    lots.Add(lot);
+                    _lots.Add(lot);
                 }
                 else
                 {
@@ -102,11 +102,11 @@ namespace ShopForServer
             }
         }
 
-        public void RemoveShopLot(IShopLot lot)
+        public void RemoveShopLot(ShopLot lot)
         {
-            if (lots.Contains(lot))
+            if (_lots.Contains(lot))
             {
-                lots.Remove(lot);
+                _lots.Remove(lot);
             }
             else
             {
@@ -117,20 +117,20 @@ namespace ShopForServer
         public List<string> GetShopLots()
         {
             List<string> result = new List<string>();
-            foreach(var temp in lots)
+            foreach(var temp in _lots)
             {
                 result.Add(temp.Name);
             }
             return result;
         }
 
-        public void SaveIShop(Stream stream)
+        public void SaveShop(Stream stream)
         {
             BinaryFormatter bf = new BinaryFormatter();
             bf.Serialize(stream, this);
         }
 
-        public MemoryStream SaveIShop()
+        public MemoryStream SaveShop()
         {
             BinaryFormatter bf = new BinaryFormatter();
             MemoryStream ms = new MemoryStream();
@@ -138,13 +138,20 @@ namespace ShopForServer
             return ms;
         }
 
-        public IShopLot GetLotByName(string name)
+        public ShopLot GetShopLot(string name)
         {
-            IShopLot result = null;
-            foreach(var t in lots)
+            ShopLot result = null;
+            foreach(var t in _lots)
             {
                 if (t.Name == name) result = t;
             }
+            return result;
+        }
+
+        public ShopLot GetShopLot(string[] tags)
+        {
+            ShopLot result = null;
+            
             return result;
         }
 
@@ -152,7 +159,7 @@ namespace ShopForServer
         {
             string result = string.Empty;
             HashSet<string> temp = new HashSet<string>();
-            foreach(var t in lots)
+            foreach(var t in _lots)
             {
                 temp.Add(t.ToString());
             }
@@ -162,90 +169,48 @@ namespace ShopForServer
             }
             return result;
         }
-    }
 
-    [Serializable]
-    class ShopLot : IShopLot
-    {
-        private string name;
-        public string Name { get { return name; } }
-        private double price;
-        public double Price { get { return price; } }
-        private string about;
-        public string About { get { return about; } }
-        private Image picture;
-        public Image Picture { get { return picture; } }
-
-        public ShopLot(string t_name, string picture_path, string t_about, double t_price)
+        public void AddAccount(Account account)
         {
-            name = t_name;
-
-            picture = Image.FromFile(picture_path);
-
-            if (t_price > 0) price = t_price;
-            else throw new ArgumentException("price might be grater than zero", price.ToString());
-
-            about = t_about;
+            
         }
 
-        public void EditPicture(string picture_path)
+        public void RemoveAccount(Account account)
         {
-            picture = Image.FromFile(picture_path);
+            
         }
 
-        public void EditPrice(double t_price)
+        public List<string> GetAccounts()
         {
-            if (t_price > 0) price = t_price;
-            else throw new ArgumentException("price might be grater than zero", price.ToString());
+            
         }
 
-        public void EditAbout(string t_about)
+        public Account GetAccount(string name)
         {
-            about = t_about;
+            
         }
     }
 
-    interface IShopLot
+
+    internal interface IAccountHolder
     {
-        string Name { get; }
-        double Price { get; }
-        string About { get; }
-        Image Picture { get; }
+        void AddAccount(Account account);
 
-        void EditPicture(string picture_path);
+        void RemoveAccount(Account account);
 
-        void EditPrice(double t_price);
+        List<string> GetAccounts();
 
-        void EditAbout(string t_about);
+        Account GetAccount(string name);
     }
 
-    interface IAccount
+    internal interface IShop
     {
-        void ChangePassword(string password);
+        void AddShopLot(ShopLot lot);
 
-        void EditAbout(string about);
-
-        int GetWeight();
-    }
-
-    interface IShop
-    {
-        void AddShopLot(IShopLot lot);
-
-        void AddShopLot(Stream stream);
-
-        void AddShopLot(string lot_path);
-
-        void RemoveShopLot(IShopLot lot);
+        void RemoveShopLot(ShopLot lot);
 
         List<string> GetShopLots();
 
-        void SaveIShop(Stream stream);
-
-        MemoryStream SaveIShop();
-
-        IShopLot GetLotByName(string name);
-
-
+        ShopLot GetShopLot(string name);
     }
 }
