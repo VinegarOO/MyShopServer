@@ -13,113 +13,104 @@ namespace ShopServer
     [Serializable]
     internal class Shop : IShop, IAccountHolder
     {
-        private List<ShopLot> _lots;
+        private List<string> _lots;
+        private List<string> _accounts;
 
         public Shop()
         {
-            _lots = new List<ShopLot>();
+            _lots = new List<string>();
+            _accounts = new List<string>();
         }
 
         public void AddShopLot(ShopLot lot)
         {
-            if (!_lots.Contains(lot))
+            if (this.GetShopLot(lot.Name) != null)
             {
-                if(this.GetShopLot(lot.Name) != null)
+                if (!_lots.Contains(lot.Name))
                 {
-                    _lots.Add(lot);
+                    SaveShopLot(lot);
+                    _lots.Add(lot.Name);
                 }
                 else
                 {
-                    throw new ArgumentException("Shop lot name is already exists", lot.Name);
+                    throw new ArgumentException("Shop lot is already exists", lot.ToString());
                 }
             }
             else
             {
-                throw new ArgumentException("Shop lot is already exists", lot.ToString());
+                throw new ArgumentNullException("lot.Name");
             }
         }
 
         public void AddShopLot(Stream stream)
         {
             BinaryFormatter bf = new BinaryFormatter();
-            ShopLot lot;
-            try
-            {
-                lot = (ShopLot)bf.Deserialize(stream);
-            }
-            catch(Exception e)
-            {
-                throw e;
-            }
+            ShopLot lot = (ShopLot)bf.Deserialize(stream);
 
-            if (!_lots.Contains(lot))
-            {
-                if (this.GetShopLot(lot.Name) != null)
-                {
-                    _lots.Add(lot);
-                }
-                else
-                {
-                    throw new ArgumentException("Shop lot name is already exists", lot.Name);
-                }
-            }
-            else
-            {
-                throw new ArgumentException("Shop lot is already exists", lot.ToString());
-            }
+            AddShopLot(lot);
         }
 
         public void AddShopLot(string lotPath)
         {
             BinaryFormatter bf = new BinaryFormatter();
             ShopLot lot;
-            try
+            using (FileStream fs = new FileStream(lotPath, FileMode.Open))
             {
-                using (FileStream fs = new FileStream(lotPath, FileMode.Open))
-                {
-                    lot = (ShopLot)bf.Deserialize(fs);
-                }
-            }
-            catch (Exception e)
-            {
-                throw e;
+                lot = (ShopLot)bf.Deserialize(fs);
             }
 
-            if (!_lots.Contains(lot))
-            {
-                if (this.GetShopLot(lot.Name) != null)
-                {
-                    _lots.Add(lot);
-                }
-                else
-                {
-                    throw new ArgumentException("Shop lot name is already exists", lot.Name);
-                }
-            }
-            else
-            {
-                throw new ArgumentException("Shop lot is already exists", lot.ToString());
-            }
+            AddShopLot(lot);
         }
 
         public void RemoveShopLot(ShopLot lot)
         {
-            if (_lots.Contains(lot))
+            if (_lots.Contains(lot.Name))
             {
-                _lots.Remove(lot);
+                File.Delete($"{lot.Name}.safer");
+                _lots.Remove(lot.Name);
             }
             else
             {
-                throw new ArgumentException("Shop lot is not in the Shop", lot.ToString());
+                throw new ArgumentException("Shop lot is not in the Shop", "lot");
+            }
+        }
+
+        private void SaveShopLot(ShopLot lot)
+        {
+            BinaryFormatter bf = new BinaryFormatter();
+            using (FileStream fs = new FileStream($"{lot.Name}.safer", FileMode.Create))
+            {
+                bf.Serialize(fs, lot);
             }
         }
 
         public List<string> GetShopLots()
         {
             List<string> result = new List<string>();
-            foreach(var temp in _lots)
+            foreach (var tLot in _lots)
             {
-                result.Add(temp.Name);
+                if (File.Exists($"{tLot}.safer"))
+                {
+                    result.Add(tLot);
+                }
+            }
+            return result;
+        }
+
+        public List<ShopLot> GetShopLots(string[] tags)
+        {
+            List<ShopLot> result = new List<ShopLot>();
+            foreach (var temp in _lots)
+            {
+                ShopLot tLot = GetShopLot(temp);
+                foreach (var tag in tags)
+                {
+                    if (tLot.Tags.Contains(tag))
+                    {
+                        result.Add(tLot);
+                        break;
+                    }
+                }
             }
             return result;
         }
@@ -141,29 +132,28 @@ namespace ShopServer
         public ShopLot GetShopLot(string name)
         {
             ShopLot result = null;
-            foreach(var t in _lots)
+            if (_lots.Contains(name))
             {
-                if (t.Name == name) result = t;
+                if (File.Exists($"{name}.safer"))
+                {
+                    BinaryFormatter bf = new BinaryFormatter();
+                    using (FileStream fs = new FileStream($"{name}.safer", FileMode.Open))
+                    {
+                        result = (ShopLot)bf.Deserialize(fs);
+                    }
+                }
             }
-            return result;
-        }
-
-        public ShopLot GetShopLot(string[] tags)
-        {
-            ShopLot result = null;
-            
             return result;
         }
 
         public override string ToString()
         {
             string result = string.Empty;
-            HashSet<string> temp = new HashSet<string>();
             foreach(var t in _lots)
             {
-                temp.Add(t.ToString());
+                result += (t + Environment.NewLine);
             }
-            foreach(var t in temp)
+            foreach (var t in _accounts)
             {
                 result += (t + Environment.NewLine);
             }
@@ -172,22 +162,124 @@ namespace ShopServer
 
         public void AddAccount(Account account)
         {
-            
+            if (account.Name == null)
+            {
+                throw new ArgumentNullException("account.Name");
+            }
+            if (_accounts.Contains(account.Name))
+            {
+                throw new ArgumentException("This account name already exists");
+            }
+            SaveAccount(account);
+            _accounts.Add(account.Name);
+        }
+
+        public void AddAccount(Stream stream)
+        {
+            BinaryFormatter bf = new BinaryFormatter();
+            Account account = (Account)bf.Deserialize(stream);
+
+            AddAccount(account);
+        }
+
+        public void AddAccount(string accPath)
+        {
+            BinaryFormatter bf = new BinaryFormatter();
+            Account account;
+            using (FileStream fs = new FileStream(accPath, FileMode.Open))
+            {
+                account = (Account)bf.Deserialize(fs);
+            }
+
+            AddAccount(account);
         }
 
         public void RemoveAccount(Account account)
         {
-            
+            if (_lots.Contains(account.Name))
+            {
+                File.Delete($"{account.Name}.acc");
+                _lots.Remove(account.Name);
+            }
+            else
+            {
+                throw new ArgumentException("Shop lot is not in the Shop", "account");
+            }
+        }
+
+        private void SaveAccount(Account account)
+        {
+            BinaryFormatter bf = new BinaryFormatter();
+            using (FileStream fs = new FileStream($"{account.Name}.acc", FileMode.Create))
+            {
+                bf.Serialize(fs, account);
+            }
         }
 
         public List<string> GetAccounts()
         {
-            
+            List<string> result = new List<string>();
+            foreach (var tAcc in _accounts)
+            {
+                if (File.Exists($"{tAcc}.acc"))
+                {
+                    result.Add(tAcc);
+                }
+            }
+            return result;
         }
+
+        /*public List<string> GetAccounts(AccessRights accessRights)
+        {
+            List<string> result = new List<string>();
+            foreach (var tAcc in _accounts)
+            {
+                if (File.Exists($"{tAcc}.acc"))
+                {
+                    Account tempAccount = GetAccount($"{tAcc}.acc");
+                    if (tempAccount.AccessRight == accessRights)
+                    {
+                        result.Add(tAcc);
+                    }
+                }
+            }
+            return result;
+        }*/
 
         public Account GetAccount(string name)
         {
-            
+            Account result = null;
+            if (_accounts.Contains(name))
+            {
+                if (File.Exists($"{name}.acc"))
+                {
+                    BinaryFormatter bf = new BinaryFormatter();
+                    using (FileStream fs = new FileStream($"{name}.acc", FileMode.Open))
+                    {
+                        result = (Account)bf.Deserialize(fs);
+                    }
+                }
+            }
+            return result;
+        }
+
+        public bool SelfChecking()
+        {
+            foreach (var tLot in _lots)
+            {
+                if (!File.Exists($"{tLot}.safer"))
+                {
+                    return false;
+                }
+            }
+            foreach (var tAcc in _accounts)
+            {
+                if (!File.Exists($"{tAcc}.acc"))
+                {
+                    return false;
+                }
+            }
+            return true;
         }
     }
 
