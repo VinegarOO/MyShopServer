@@ -47,14 +47,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ShopForServerClasses.cs" />
-    <Compile Include="ShopForServer.cs" />
+    <Compile Include="core\server\Server.cs" />
+    <Compile Include="core\shop\AccessRights.cs" />
+    <Compile Include="core\shop\Account.cs" />
+    <Compile Include="core\shop\IAccountHolder.cs" />
+    <Compile Include="core\shop\IShop.cs" />
+    <Compile Include="core\shop\Options.cs" />
+    <Compile Include="core\shop\ShopLot.cs" />
+    <Compile Include="core\shop\Shop.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UserInterface.cs" />
+    <Compile Include="core\console\UserInterface.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

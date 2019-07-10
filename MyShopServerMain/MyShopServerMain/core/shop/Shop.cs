@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
+using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Drawing;
 
-
-namespace ShopServer
+namespace MyShopServerMain.core.shop
 {
     [Serializable]
     internal class Shop : IShop, IAccountHolder
@@ -281,28 +277,5 @@ namespace ShopServer
             }
             return true;
         }
-    }
-
-
-    internal interface IAccountHolder
-    {
-        void AddAccount(Account account);
-
-        void RemoveAccount(Account account);
-
-        List<string> GetAccounts();
-
-        Account GetAccount(string name);
-    }
-
-    internal interface IShop
-    {
-        void AddShopLot(ShopLot lot);
-
-        void RemoveShopLot(ShopLot lot);
-
-        List<string> GetShopLots();
-
-        ShopLot GetShopLot(string name);
     }
 }
