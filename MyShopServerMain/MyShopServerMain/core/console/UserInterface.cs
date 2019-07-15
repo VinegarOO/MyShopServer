@@ -1,14 +1,12 @@
-﻿using MyShopServerMain.core.shop;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
+using MyShopServerMain.core.shop;
 
 namespace MyShopServerMain.core.console
 {
     public static class UserInterface
     {
-        delegate void CommandDelegate(string[] command, Shop shop, Account adminAccount);
+        delegate void CommandDelegate(string[] command);
 
         public static void Menu()
         {
@@ -16,7 +14,6 @@ namespace MyShopServerMain.core.console
             while (true)
             {
                 Console.WriteLine("enter password");
-                Console.Write(">> ");
                 string passwd = Console.ReadLine();
                 if (console.Verify(passwd))
                 {
@@ -27,82 +24,24 @@ namespace MyShopServerMain.core.console
                     Console.WriteLine("wrong password");
                 }
             }
-
-            Shop shop = null; // load or create shop
-
-            bool flag = true;
-            while (flag)
-            {
-                Console.WriteLine("Do you want to load shop (yes/no)");
-                switch (Console.ReadLine())
-                {
-                    case "yes":
-                    {
-                        Console.WriteLine("Print path to the shop");
-                        try
-                        {
-                            BinaryFormatter bf = new BinaryFormatter();
-                            using (FileStream fs = new FileStream($"{Console.ReadLine()}.shop", FileMode.Open))
-                            {
-                                shop = (Shop) bf.Deserialize(fs);
-                            }
-
-                            flag = false;
-                        }
-                        catch (Exception e)
-                        {
-                            Console.WriteLine(e.Message);
-                        }
-
-                        break;
-                    }
-
-                    case "no":
-                    {
-                        Console.WriteLine("Print name of new shop");
-                        while (true)
-                        {
-                            try
-                            {
-                                shop = new Shop(Console.ReadLine());
-
-                                flag = false;
-                                break;
-                            }
-                            catch (Exception e)
-                            {
-                                Console.WriteLine(e.Message);
-                            }
-                        }
-
-                        break;
-                    }
-
-                    default:
-                    {
-                        Console.WriteLine("You must choose");
-                        break;
-                    }
-                }
-            }
-
             while (true)
             {
                 Dictionary<string, CommandDelegate> commands = new Dictionary<string, CommandDelegate>
                 {
                     {"start", Start },
                     {"exit", Exit },
-                    {"manage", Manage },
+                    {"add", Add },
+                    {"edit", Edit },
+                    {"inspect", Inspect },
                     {"stop", Stop },
                     {"help", Help }
                 };
-                Console.WriteLine("Waiting for command");
-                Console.Write("Admin >> ");
+                Console.WriteLine("Waiting for command" + Environment.NewLine);
                 string[] command = Console.ReadLine().Split();
 
                 if (commands.ContainsKey(command[0]))
                 {
-                    commands[command[0]](command, shop, console);
+                    commands[command[0]](command);
                 }
                 else
                 {
@@ -111,613 +50,48 @@ namespace MyShopServerMain.core.console
             }
         }
 
-        private static void Start(string[] command, Shop shop, Account adminAccount)
+        private static void Start(string[] command)
         {
             Console.WriteLine("Starting server");
         }
 
-        private static void Manage(string[] command, Shop shop, Account adminAccount)
+        private static void Exit(string[] command)
         {
-            if (command.Length < 3)
-            {
-                Console.WriteLine("wrong arguments");
-                return;
-            }
-
-            switch (command[3])
-            {
-                case "add":
-                {
-                    Add(command, shop);
-                    break;
-                }
-
-                case "edit":
-                {
-                    Edit(command, shop, adminAccount);
-                    break;
-                }
-
-                case "inspect":
-                {
-                    Inspect(command, shop);
-                    break;
-                }
-
-                default:
-                {
-                    Console.WriteLine("i can't do it");
-                    return;
-                }
-            }
+            Console.WriteLine("Closing console");
         }
 
-        private static void Add(string[] command, Shop shop)
+        private static void Add(string[] command)
         {
-            switch (command[1])
-            {
-                case "account":
-                {
-                    string password;
-                    while (true)
-                    {
-                        Console.WriteLine("print new password");
-                        password = Console.ReadLine();
-                        Console.WriteLine("confirm password");
-                        if (Console.ReadLine() == password)
-                        {
-                            break;
-                        }
-                        Console.WriteLine("passwords isn't similar");
-                    }
-
-                    Account account = new Account(command[2], password);
-
-                    try
-                    {
-                        shop.AddAccount(account);
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e.Message);
-                        return;
-                    }
-                    break;
-                }
-
-                case "goods":
-                {
-                    string picturePath;
-                    while (true)
-                    {
-                        Console.WriteLine("print path to the picture");
-                        picturePath = Console.ReadLine();
-                        if (File.Exists(picturePath))
-                        {
-                            break;
-                        }
-
-                        Console.WriteLine("wrong path");
-                    }
-
-                    Console.WriteLine("print goods description");
-                    string about = Console.ReadLine();
-
-                    decimal price;
-                    while (true)
-                    {
-                        try
-                        {
-                            Console.WriteLine("print price");
-                            price = Convert.ToDecimal(Console.ReadLine());
-                            break;
-                        }
-                        catch
-                        {
-                            Console.WriteLine("not a number");
-                        }
-                    }
-
-                    string[] tags;
-                    while (true)
-                    {
-                        try
-                        {
-                            Console.WriteLine(
-                                "add tags" + Environment.NewLine +
-                                "you can add no tags" + Environment.NewLine +
-                                "tags must be spited by spaces"
-                            );
-                            tags = Console.ReadLine().Split();
-                            break;
-                        }
-                        catch
-                        {
-                            Console.WriteLine("wrong input");
-                        }
-                    }
-
-                    ShopLot shopLot = new ShopLot(command[2], picturePath, about, price, tags);
-
-                    try
-                    {
-                        shop.AddShopLot(shopLot);
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e.Message);
-                        return;
-                    }
-                    break;
-                }
-
-                default:
-                {
-                    Console.WriteLine("wrong argument");
-                    return;
-                }
-            }
-
-            Console.WriteLine("Item added");
+            Console.WriteLine("Adding new lot to the shop");
         }
 
-        private static void Edit(string[] command, Shop shop, Account adminAccount)
+        private static void Edit(string[] command)
         {
-            switch (command[1])
-            {
-                case "account":
-                {
-                    Account account;
-                    try
-                    {
-                        account = shop.GetAccount(command[2]);
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e.GetType());
-                        return;
-                    }
-                    if (account == null)
-                    {
-                        Console.WriteLine("account doesn't exists");
-                        return;
-                    }
-
-                    Console.WriteLine("What parameter do you want to change");
-                    Console.WriteLine("You can change:" + Environment.NewLine +
-                                      "Password" + Environment.NewLine +
-                                      "AccessRights" + Environment.NewLine + 
-                                      "State of account - Money");
-                    switch (Console.ReadLine())
-                    {
-                        case "Password":
-                        {
-                            string newPassword;
-                            while (true)
-                            {
-                                Console.WriteLine("print new password");
-                                newPassword = Console.ReadLine();
-                                Console.WriteLine("confirm new password");
-                                if (Console.ReadLine() == newPassword)
-                                {
-                                    break;
-                                }
-                                Console.WriteLine("passwords isn't similar");
-                            }
-
-                            string password;
-                            Console.WriteLine("print current password");
-                            password = Console.ReadLine();
-
-                            try
-                            {
-                                account.ChangePassword(newPassword, password);
-                            }
-                            catch (Exception e)
-                            {
-                                Console.WriteLine(e.Message);
-                                return;
-                            }
-                            break;
-                        }
-
-                        case "AccessRights":
-                        {
-                            AccessRights accessRights;
-                            Console.WriteLine(
-                                "To change AccessRights" + Environment.NewLine +
-                                "User" + Environment.NewLine +
-                                "VipUser" + Environment.NewLine +
-                                "Moder" + Environment.NewLine +
-                                "Admin"
-                            );
-
-                            switch (Console.ReadLine())
-                            {
-                                case "User":
-                                {
-                                    accessRights = AccessRights.User;
-                                    break;
-                                }
-
-                                case "VipUser":
-                                {
-                                    accessRights = AccessRights.VipUser;
-                                    break;
-                                }
-
-                                case "Moder":
-                                {
-                                    accessRights = AccessRights.Moder;
-                                    break;
-                                }
-
-                                case "Admin":
-                                {
-                                    accessRights = AccessRights.Admin;
-                                    break;
-                                }
-
-                                default:
-                                {
-                                    Console.WriteLine("wrong access rights");
-                                    return;
-                                }
-                            }
-
-                            try
-                            {
-                                Console.WriteLine("print admin password");
-                                string aPassword = Console.ReadLine();
-                                account.ChangeAccessRights(accessRights, adminAccount, aPassword);
-                            }
-                            catch (Exception e)
-                            {
-                                Console.WriteLine(e.Message);
-                                return;
-                            }
-                            break;
-                        }
-
-                        case "Money":
-                        {
-                            decimal sum;
-                            while (true)
-                            {
-                                try
-                                {
-                                    Console.WriteLine("print sum");
-                                    sum = Convert.ToDecimal(Console.ReadLine());
-                                    break;
-                                }
-                                catch
-                                {
-                                    Console.WriteLine("not a number");
-                                }
-                            }
-
-                            Console.WriteLine("print admin password");
-                            string aPassword = Console.ReadLine();
-
-                            if (sum > 0)
-                            {
-                                try
-                                {
-                                    account.Refill(sum, adminAccount, aPassword);
-                                }
-                                catch (Exception e)
-                                {
-                                    Console.WriteLine(e.Message);
-                                    return;
-                                }
-                            }
-                            else
-                            {
-                                try
-                                {
-                                    account.Withdraw(sum, adminAccount, aPassword);
-                                }
-                                catch (Exception e)
-                                {
-                                    Console.WriteLine(e.Message);
-                                    return;
-                                }
-                            }
-
-                            break;
-                        }
-
-                        default:
-                        {
-                            Console.WriteLine("there is no option");
-                            return;
-                        }
-                    }
-
-                    break;
-                }
-
-                case "goods":
-                {
-                    ShopLot shopLot;
-                    try
-                    {
-                        shopLot = shop.GetShopLot(command[2]);
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e.Message);
-                        return;
-                    }
-                    if (shopLot == null)
-                    {
-                        Console.WriteLine("Item doesn't exists");
-                        return;
-                    }
-                    
-                    Console.WriteLine("What parameter do you want to change");
-                    Console.WriteLine("You can change:" + Environment.NewLine +
-                                      "Picture" + Environment.NewLine +
-                                      "Price" + Environment.NewLine +
-                                      "Description - About");
-                    switch (Console.ReadLine())
-                    {
-                        case "Picture":
-                        {
-                            string picturePath;
-                            Console.WriteLine("Chose new picture");
-                            picturePath = Console.ReadLine();
-                            try
-                            {
-                                shopLot.EditPicture(picturePath);
-                            }
-                            catch (Exception e)
-                            {
-                                Console.WriteLine(e.Message);
-                                return;
-                            }
-                            break;
-                        }
-
-                        case "Price":
-                        {
-                            decimal price;
-                            Console.WriteLine("Print new price");
-                            while (true)
-                            {
-                                try
-                                {
-                                    Console.WriteLine("print sum");
-                                    price = Convert.ToDecimal(Console.ReadLine());
-                                    break;
-                                }
-                                catch
-                                {
-                                    Console.WriteLine("not a number");
-                                }
-                            }
-
-                            try
-                            {
-                                shopLot.EditPrice(price);
-                            }
-                            catch (Exception e)
-                            {
-                                Console.WriteLine(e.Message);
-                                return;
-                            }
-                            break;
-                        }
-
-                        case "About":
-                        {
-                            string about;
-                            Console.WriteLine("Print new description");
-                            about = Console.ReadLine();
-                            try
-                            {
-                                shopLot.EditAbout(about);
-                            }
-                            catch (Exception e)
-                            {
-                                Console.WriteLine(e.Message);
-                                return;
-                            }
-                            break;
-                        }
-                    }
-                    break;
-                }
-
-                default:
-                {
-                    Console.WriteLine("wrong argument");
-                    return;
-                }
-            }
-
-            Console.WriteLine("operation is done");
+            Console.WriteLine("Changing a lot into the shop");
         }
 
-        private static void Inspect(string[] command, Shop shop)
+        private static void Inspect(string[] command)
         {
-            switch (command[1])
-            {
-                case "account":
-                {
-                    if (command[2] == null)
-                    {
-                        List<string> accs = shop.GetAccounts();
-                        foreach (var acc in accs)
-                        {
-                            Console.WriteLine(acc);
-                        }
-                        return;
-                    }
-
-                    Account account;
-                    try
-                    {
-                        account = shop.GetAccount(command[2]);
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e.GetType());
-                        return;
-                    }
-                    if (account == null)
-                    {
-                        Console.WriteLine("account doesn't exists");
-                        return;
-                    }
-
-                    Console.WriteLine(account.ToString());
-                    break;
-                }
-
-                case "goods":
-                {
-                    if (command[2] == null)
-                    {
-                        List<string> lots = shop.GetShopLotsList();
-                        foreach (var lot in lots)
-                        {
-                            Console.WriteLine(lot);
-                        }
-                        return;
-                    }
-
-                    ShopLot shopLot;
-                    try
-                    {
-                        shopLot = shop.GetShopLot(command[2]);
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e.Message);
-                        return;
-                    }
-                    if (shopLot == null)
-                    {
-                        Console.WriteLine("Item doesn't exists");
-                        return;
-                    }
-
-                    Console.WriteLine(shopLot.ToString());
-                    
-                    break;
-                }
-
-                default:
-                {
-                    Console.WriteLine("wrong argument");
-                    return;
-                }
-            }
+            Console.WriteLine("It is info");
         }
 
-        private static void Stop(string[] command, Shop shop, Account adminAccount)
+        private static void Stop(string[] command)
         {
-            Console.WriteLine("Stopping server");
+            Console.WriteLine("Stoping server");
         }
 
-        private static void Exit(string[] command, Shop shop, Account adminAccount)
+        private static void Help(string[] command)
         {
-            while (true)
+            List<string> help = new List<string> { "start - starting server", "add - add new lot",
+                "edit - edit lot", "exit - close console", "stop - stop the server",
+                "inspect - show info about lot" };
+
+            foreach (var h in help)
             {
-                Console.WriteLine("are you sure (yes/no)");
-                switch (Console.ReadLine())
-                {
-                    case "yes":
-                    {
-                        Stop(new[] { "", "" }, shop, adminAccount);
-                        using (FileStream fs = new FileStream($"{shop.name}.shop", FileMode.CreateNew))
-                        {
-                            shop.SaveShop(fs);
-                        }
-
-                        Environment.Exit(0);
-                        break;
-                    }
-
-                    case "no":
-                    {
-                        return;
-                    }
-                }
-            }
-        }
-
-        private static void Help(string[] command, Shop shop, Account adminAccount)
-        {
-            List<string> help = new List<string> { "start", "manage", "stop", "exit" };
-
-            Console.WriteLine();
-
-            if (command.Length == 1)
-            {
-                foreach (var h in help)
-                {
-                    Console.WriteLine(h);
-                }
-
-                Console.WriteLine("you can get additional option by adding arguments to command");
+                Console.WriteLine(h);
             }
 
-            else
-            {
-                switch (command[1])
-                {
-                    case "start":
-                    {
-                        Console.WriteLine(
-                            "" + Environment.NewLine +
-                            ""
-                        );
-                        break;
-                    }
-
-                    case "manage":
-                    {
-                        Console.WriteLine(
-                            "first argument - type of item:" + Environment.NewLine +
-                            "to choose account print - account" + Environment.NewLine +
-                            "to choose goods print - goods" + Environment.NewLine +
-                            "--- --- --- --- --- --- ---" + Environment.NewLine +
-                            "second argument - name of item" + Environment.NewLine +
-                            "--- --- --- --- --- --- ---" + Environment.NewLine +
-                            "third argument - type of action:" + Environment.NewLine +
-                            "to add new item print - add" + Environment.NewLine +
-                            "to edit item print - edit" + Environment.NewLine +
-                            "to see item print - inspect"
-                        );
-                        break;
-                    }
-
-                    case "stop":
-                    {
-                        Console.WriteLine(
-                            "" + Environment.NewLine +
-                            ""
-                        );
-                        break;
-                    }
-
-                    case "exit":
-                    {
-                        Console.WriteLine("exit has no arguments");
-                        break;
-                    }
-
-                    default:
-                    {
-                        Console.WriteLine("wrong argument");
-                        break;
-                    }
-                }
-            }
-
-            Console.WriteLine();
+            Console.WriteLine(Environment.NewLine);
         }
     }
 }

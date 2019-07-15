@@ -41,10 +41,6 @@ namespace MyShopServerMain.core.shop
         {
             if (tPassword == _password)
             {
-                if (sum < 0)
-                {
-                    throw new ArgumentException("you can't withdraw sum below zero");
-                }
                 if (_money >= sum)
                 {
                     _money -= sum;
@@ -60,44 +56,10 @@ namespace MyShopServerMain.core.shop
             }
         }
 
-        internal void Withdraw(decimal sum, Account account, string aPassword)
-        {
-            if (account.AccessRight == AccessRights.Admin)
-            {
-                if (sum < 0)
-                {
-                    throw new ArgumentException("you can't withdraw sum below zero");
-                }
-                if (account.Verify(aPassword))
-                {
-                    if (_money >= sum)
-                    {
-                        _money -= sum;
-                    }
-                    else
-                    {
-                        throw new ArgumentOutOfRangeException("sum", "Not enough money to do withdraw");
-                    }
-                }
-                else
-                {
-                    throw new MemberAccessException("Incorrect password");
-                }
-            }
-            else
-            {
-                throw new FormatException("Not enough rights");
-            }
-        }
-
         internal void Refill(decimal sum, Account account, string aPassword)
         {
             if (account.AccessRight == AccessRights.Admin)
             {
-                if (sum < 0)
-                {
-                    throw new ArgumentException("you can't refill sum below zero");
-                }
                 if (account.Verify(aPassword))
                 {
                     _money += sum;
@@ -109,7 +71,7 @@ namespace MyShopServerMain.core.shop
             }
             else
             {
-                throw new FormatException("Not enough rights");
+                throw new FormatException("Not enouth rights");
             }
         }
 
@@ -132,17 +94,8 @@ namespace MyShopServerMain.core.shop
             }
             else
             {
-                throw new FormatException("Not enough rights");
+                throw new FormatException("Not enouth rights");
             }
-        }
-
-        public override string ToString()
-        {
-            string result = String.Empty;
-            result += $"Name: {Name}" + Environment.NewLine;
-            result += $"State of account: {_money}" + Environment.NewLine;
-            result += $"AccessRights: {AccessRight}";
-            return result;
         }
     }
 }
