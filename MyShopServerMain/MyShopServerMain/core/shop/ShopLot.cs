@@ -11,13 +11,12 @@ namespace MyShopServerMain.core.shop
         internal string About { get; private set; }
         internal Image Picture { get; private set; }
         internal string[] Tags { get; private set; }
-        internal Options Option { get; private set; }
 
-        internal ShopLot(string tName, string picturePath, string tAbout, decimal tPrice, string[] tags, Options tOpt)
+        internal ShopLot(string tName, string picturePath, string tAbout, decimal tPrice, string[] tags)
         {
             if (tName == null)
             {
-                throw new ArgumentNullException("tName");
+                throw new ArgumentNullException("tName", "Name can't be null");
             }
             if (tName == String.Empty)
             {
@@ -27,7 +26,7 @@ namespace MyShopServerMain.core.shop
 
             if (picturePath == null)
             {
-                throw new ArgumentNullException("picturePath");
+                throw new ArgumentNullException("picturePath", "wrong pass to pricture");
             }
             Picture = Image.FromFile(picturePath);
 
@@ -44,17 +43,11 @@ namespace MyShopServerMain.core.shop
 
             if (tags == null)
             {
-                throw new ArgumentNullException(nameof(tags));
-            }
-            Tags = tags;
-
-            if (tOpt.optList.Count != 0)
-            {
-                Option = tOpt;
+                Tags = new string[0];
             }
             else
             {
-                throw new ArgumentNullException("tOpt", "Must contain at least one Option");
+                Tags = tags;
             }
         }
 
@@ -82,6 +75,27 @@ namespace MyShopServerMain.core.shop
         internal void EditAbout(string tAbout)
         {
             About = tAbout;
+        }
+
+        internal string GetTags()
+        {
+            string result = String.Empty;
+            foreach (var tag in Tags)
+            {
+                result += tag;
+            }
+
+            return result;
+        }
+
+        public override string ToString()
+        {
+            string result = String.Empty;
+            result += $"Name: {Name}\n";
+            result += $"Price: {Price}\n";
+            result += $"Tags: {this.GetTags()}\n";
+            result += $"Description: {About}";
+            return result;
         }
     }
 }

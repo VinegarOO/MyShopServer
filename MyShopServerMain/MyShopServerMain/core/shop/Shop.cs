@@ -11,11 +11,23 @@ namespace MyShopServerMain.core.shop
     {
         private List<string> _lots;
         private List<string> _accounts;
+        internal readonly string name;
 
-        public Shop()
+        public Shop(string tName)
         {
             _lots = new List<string>();
             _accounts = new List<string>();
+
+            if (tName == null)
+            {
+                throw new NullReferenceException("Name can't be null");
+            }
+
+            if (tName == string.Empty)
+            {
+                throw new NullReferenceException("Name can't be blank");
+            }
+            name = tName;
         }
 
         public void AddShopLot(ShopLot lot)
@@ -111,6 +123,11 @@ namespace MyShopServerMain.core.shop
             return result;
         }
 
+        public List<string> GetShopLotsList()
+        {
+            return _lots;
+        }
+
         public void SaveShop(Stream stream)
         {
             BinaryFormatter bf = new BinaryFormatter();
@@ -160,7 +177,7 @@ namespace MyShopServerMain.core.shop
         {
             if (account.Name == null)
             {
-                throw new ArgumentNullException("account.Name");
+                throw new ArgumentNullException("account.Name", "Name can't be null");
             }
             if (_accounts.Contains(account.Name))
             {
