@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace MyShopServerMain.core.shop
 {
@@ -34,6 +36,25 @@ namespace MyShopServerMain.core.shop
             else
             {
                 throw new MemberAccessException("Incorrect password");
+            }
+        }
+
+        internal void ChangePassword(string newPassword, Account adminAccount, string aPassword)
+        {
+            if (adminAccount.AccessRight == AccessRights.Admin)
+            {
+                if (adminAccount.Verify(aPassword))
+                {
+                    _password = newPassword;
+                }
+                else
+                {
+                    throw new MemberAccessException("Incorrect password");
+                }
+            }
+            else
+            {
+                throw new FormatException("Not enough rights");
             }
         }
 

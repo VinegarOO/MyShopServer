@@ -86,16 +86,16 @@ namespace MyShopServerMain.core.console
                 }
             }
 
+            Dictionary<string, CommandDelegate> commands = new Dictionary<string, CommandDelegate>
+            {
+                {"start", Start },
+                {"exit", Exit },
+                {"manage", Manage },
+                {"stop", Stop },
+                {"help", Help }
+            };
             while (true)
             {
-                Dictionary<string, CommandDelegate> commands = new Dictionary<string, CommandDelegate>
-                {
-                    {"start", Start },
-                    {"exit", Exit },
-                    {"manage", Manage },
-                    {"stop", Stop },
-                    {"help", Help }
-                };
                 Console.WriteLine("Waiting for command");
                 Console.Write("Admin >> ");
                 string[] command = Console.ReadLine().Split();
@@ -305,13 +305,12 @@ namespace MyShopServerMain.core.console
                                 Console.WriteLine("passwords isn't similar");
                             }
 
-                            string password;
-                            Console.WriteLine("print current password");
-                            password = Console.ReadLine();
+                            Console.WriteLine("print admin password");
+                            var aPassword = Console.ReadLine();
 
                             try
                             {
-                                account.ChangePassword(newPassword, password);
+                                account.ChangePassword(newPassword, adminAccount, aPassword);
                             }
                             catch (Exception e)
                             {
@@ -434,6 +433,12 @@ namespace MyShopServerMain.core.console
                         }
                     }
 
+                    BinaryFormatter bf = new BinaryFormatter();
+                    using (FileStream fs = new FileStream($"{account.Name}.acc", FileMode.Create))
+                    {
+                        bf.Serialize(fs, account);
+                    }
+
                     break;
                 }
 
@@ -526,6 +531,13 @@ namespace MyShopServerMain.core.console
                             break;
                         }
                     }
+
+                    BinaryFormatter bf = new BinaryFormatter();
+                    using (FileStream fs = new FileStream($"{shopLot.Name}.safer", FileMode.Create))
+                    {
+                        bf.Serialize(fs, shopLot);
+                    }
+
                     break;
                 }
 
@@ -631,7 +643,7 @@ namespace MyShopServerMain.core.console
                     case "yes":
                     {
                         Stop(new[] { "", "" }, shop, adminAccount);
-                        using (FileStream fs = new FileStream($"{shop.name}.shop", FileMode.CreateNew))
+                        using (FileStream fs = new FileStream($"{shop.name}.shop", FileMode.Create))
                         {
                             shop.SaveShop(fs);
                         }
