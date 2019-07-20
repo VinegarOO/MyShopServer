@@ -11,7 +11,7 @@ namespace MyShopServerMain.core.shop
     {
         private List<string> _lots;
         private List<string> _accounts;
-        internal readonly string name;
+        internal readonly string Name;
 
         public Shop(string tName)
         {
@@ -27,7 +27,7 @@ namespace MyShopServerMain.core.shop
             {
                 throw new NullReferenceException("Name can't be blank");
             }
-            name = tName;
+            Name = tName;
         }
 
         public void AddShopLot(ShopLot lot)

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
-using MyShopServerMain.core.console;
+using MyShopServerMain.core.wrappers.console;
 
 namespace MyShopServerMain
 {
@@ -12,7 +12,6 @@ namespace MyShopServerMain
     {
         private static void Main()
         {
-            
             UserInterface.Menu();
         }
     }

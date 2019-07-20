@@ -1,92 +1,17 @@
-﻿using MyShopServerMain.core.shop;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using MyShopServerMain.core.shop;
+using static MyShopServerMain.core.wrappers.DataForWrappers;
 
-namespace MyShopServerMain.core.console
+namespace MyShopServerMain.core.wrappers.console
 {
     public static class UserInterface
     {
-        delegate void CommandDelegate(string[] command, Shop shop, Account adminAccount);
-
         public static void Menu()
         {
-            Account console = new Account("Admin", "qwerty", AccessRights.Admin);
-            while (true)
-            {
-                Console.WriteLine("enter password");
-                Console.Write(">> ");
-                string passwd = Console.ReadLine();
-                if (console.Verify(passwd))
-                {
-                    break;
-                }
-                else
-                {
-                    Console.WriteLine("wrong password");
-                }
-            }
-
-            Shop shop = null; // load or create shop
-
-            bool flag = true;
-            while (flag)
-            {
-                Console.WriteLine("Do you want to load shop (yes/no)");
-                switch (Console.ReadLine())
-                {
-                    case "yes":
-                    {
-                        Console.WriteLine("Print path to the shop");
-                        try
-                        {
-                            BinaryFormatter bf = new BinaryFormatter();
-                            using (FileStream fs = new FileStream($"{Console.ReadLine()}.shop", FileMode.Open))
-                            {
-                                shop = (Shop) bf.Deserialize(fs);
-                            }
-
-                            flag = false;
-                        }
-                        catch (Exception e)
-                        {
-                            Console.WriteLine(e.Message);
-                        }
-
-                        break;
-                    }
-
-                    case "no":
-                    {
-                        Console.WriteLine("Print name of new shop");
-                        while (true)
-                        {
-                            try
-                            {
-                                shop = new Shop(Console.ReadLine());
-
-                                flag = false;
-                                break;
-                            }
-                            catch (Exception e)
-                            {
-                                Console.WriteLine(e.Message);
-                            }
-                        }
-
-                        break;
-                    }
-
-                    default:
-                    {
-                        Console.WriteLine("You must choose");
-                        break;
-                    }
-                }
-            }
-
-            Dictionary<string, CommandDelegate> commands = new Dictionary<string, CommandDelegate>
+            Dictionary<string, Action> commands = new Dictionary<string, Action>
             {
                 {"start", Start },
                 {"exit", Exit },
@@ -98,11 +23,11 @@ namespace MyShopServerMain.core.console
             {
                 Console.WriteLine("Waiting for command");
                 Console.Write("Admin >> ");
-                string[] command = Console.ReadLine().Split();
+                TerminalCommand = Console.ReadLine().Split();
 
-                if (commands.ContainsKey(command[0]))
+                if (commands.ContainsKey(TerminalCommand[0]))
                 {
-                    commands[command[0]](command, shop, console);
+                    commands[TerminalCommand[0]]();
                 }
                 else
                 {
@@ -111,36 +36,36 @@ namespace MyShopServerMain.core.console
             }
         }
 
-        private static void Start(string[] command, Shop shop, Account adminAccount)
+        private static void Start()
         {
-            Console.WriteLine("Starting server");
+            // Initialise all server Threads
         }
 
-        private static void Manage(string[] command, Shop shop, Account adminAccount)
+        private static void Manage()
         {
-            if (command.Length < 3)
+            if (TerminalCommand.Length < 3)
             {
                 Console.WriteLine("wrong arguments");
                 return;
             }
 
-            switch (command[3])
+            switch (TerminalCommand[3])
             {
                 case "add":
                 {
-                    Add(command, shop);
+                    Add();
                     break;
                 }
 
                 case "edit":
                 {
-                    Edit(command, shop, adminAccount);
+                    Edit();
                     break;
                 }
 
                 case "inspect":
                 {
-                    Inspect(command, shop);
+                    Inspect();
                     break;
                 }
 
@@ -152,9 +77,9 @@ namespace MyShopServerMain.core.console
             }
         }
 
-        private static void Add(string[] command, Shop shop)
+        private static void Add()
         {
-            switch (command[1])
+            switch (TerminalCommand[1])
             {
                 case "account":
                 {
@@ -171,11 +96,11 @@ namespace MyShopServerMain.core.console
                         Console.WriteLine("passwords isn't similar");
                     }
 
-                    Account account = new Account(command[2], password);
+                    Account account = new Account(TerminalCommand[2], password);
 
                     try
                     {
-                        shop.AddAccount(account);
+                        DataForWrappers.Shop.AddAccount(account);
                     }
                     catch (Exception e)
                     {
@@ -237,11 +162,11 @@ namespace MyShopServerMain.core.console
                         }
                     }
 
-                    ShopLot shopLot = new ShopLot(command[2], picturePath, about, price, tags);
+                    ShopLot shopLot = new ShopLot(TerminalCommand[2], picturePath, about, price, tags);
 
                     try
                     {
-                        shop.AddShopLot(shopLot);
+                        DataForWrappers.Shop.AddShopLot(shopLot);
                     }
                     catch (Exception e)
                     {
@@ -261,16 +186,16 @@ namespace MyShopServerMain.core.console
             Console.WriteLine("Item added");
         }
 
-        private static void Edit(string[] command, Shop shop, Account adminAccount)
+        private static void Edit()
         {
-            switch (command[1])
+            switch (TerminalCommand[1])
             {
                 case "account":
                 {
                     Account account;
                     try
                     {
-                        account = shop.GetAccount(command[2]);
+                        account = DataForWrappers.Shop.GetAccount(TerminalCommand[2]);
                     }
                     catch (Exception e)
                     {
@@ -310,7 +235,7 @@ namespace MyShopServerMain.core.console
 
                             try
                             {
-                                account.ChangePassword(newPassword, adminAccount, aPassword);
+                                account.ChangePassword(newPassword, AdminAccount, aPassword);
                             }
                             catch (Exception e)
                             {
@@ -368,7 +293,7 @@ namespace MyShopServerMain.core.console
                             {
                                 Console.WriteLine("print admin password");
                                 string aPassword = Console.ReadLine();
-                                account.ChangeAccessRights(accessRights, adminAccount, aPassword);
+                                account.ChangeAccessRights(accessRights, AdminAccount, aPassword);
                             }
                             catch (Exception e)
                             {
@@ -402,7 +327,7 @@ namespace MyShopServerMain.core.console
                             {
                                 try
                                 {
-                                    account.Refill(sum, adminAccount, aPassword);
+                                    account.Refill(sum, AdminAccount, aPassword);
                                 }
                                 catch (Exception e)
                                 {
@@ -414,7 +339,7 @@ namespace MyShopServerMain.core.console
                             {
                                 try
                                 {
-                                    account.Withdraw(sum, adminAccount, aPassword);
+                                    account.Withdraw(sum, AdminAccount, aPassword);
                                 }
                                 catch (Exception e)
                                 {
@@ -447,7 +372,7 @@ namespace MyShopServerMain.core.console
                     ShopLot shopLot;
                     try
                     {
-                        shopLot = shop.GetShopLot(command[2]);
+                        shopLot = DataForWrappers.Shop.GetShopLot(TerminalCommand[2]);
                     }
                     catch (Exception e)
                     {
@@ -551,15 +476,15 @@ namespace MyShopServerMain.core.console
             Console.WriteLine("operation is done");
         }
 
-        private static void Inspect(string[] command, Shop shop)
+        private static void Inspect()
         {
-            switch (command[1])
+            switch (TerminalCommand[1])
             {
                 case "account":
                 {
-                    if (command[2] == null)
+                    if (TerminalCommand[2] == null)
                     {
-                        List<string> accs = shop.GetAccounts();
+                        List<string> accs = DataForWrappers.Shop.GetAccounts();
                         foreach (var acc in accs)
                         {
                             Console.WriteLine(acc);
@@ -570,7 +495,7 @@ namespace MyShopServerMain.core.console
                     Account account;
                     try
                     {
-                        account = shop.GetAccount(command[2]);
+                        account = DataForWrappers.Shop.GetAccount(TerminalCommand[2]);
                     }
                     catch (Exception e)
                     {
@@ -589,9 +514,9 @@ namespace MyShopServerMain.core.console
 
                 case "goods":
                 {
-                    if (command[2] == null)
+                    if (TerminalCommand[2] == null)
                     {
-                        List<string> lots = shop.GetShopLotsList();
+                        List<string> lots = DataForWrappers.Shop.GetShopLotsList();
                         foreach (var lot in lots)
                         {
                             Console.WriteLine(lot);
@@ -602,7 +527,7 @@ namespace MyShopServerMain.core.console
                     ShopLot shopLot;
                     try
                     {
-                        shopLot = shop.GetShopLot(command[2]);
+                        shopLot = DataForWrappers.Shop.GetShopLot(TerminalCommand[2]);
                     }
                     catch (Exception e)
                     {
@@ -628,12 +553,12 @@ namespace MyShopServerMain.core.console
             }
         }
 
-        private static void Stop(string[] command, Shop shop, Account adminAccount)
+        private static void Stop()
         {
             Console.WriteLine("Stopping server");
         }
 
-        private static void Exit(string[] command, Shop shop, Account adminAccount)
+        private static void Exit()
         {
             while (true)
             {
@@ -642,10 +567,10 @@ namespace MyShopServerMain.core.console
                 {
                     case "yes":
                     {
-                        Stop(new[] { "", "" }, shop, adminAccount);
-                        using (FileStream fs = new FileStream($"{shop.name}.shop", FileMode.Create))
+                        Stop();
+                        using (FileStream fs = new FileStream($"{DataForWrappers.Shop.Name}.shop", FileMode.Create))
                         {
-                            shop.SaveShop(fs);
+                            DataForWrappers.Shop.SaveShop(fs);
                         }
 
                         Environment.Exit(0);
@@ -660,13 +585,13 @@ namespace MyShopServerMain.core.console
             }
         }
 
-        private static void Help(string[] command, Shop shop, Account adminAccount)
+        private static void Help()
         {
             List<string> help = new List<string> { "start", "manage", "stop", "exit" };
 
             Console.WriteLine();
 
-            if (command.Length == 1)
+            if (TerminalCommand.Length == 1)
             {
                 foreach (var h in help)
                 {
@@ -678,7 +603,7 @@ namespace MyShopServerMain.core.console
 
             else
             {
-                switch (command[1])
+                switch (TerminalCommand[1])
                 {
                     case "start":
                     {
