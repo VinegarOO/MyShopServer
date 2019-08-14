@@ -113,8 +113,7 @@ namespace MyShopServerMain.core.wrappers.server
                 try
                 {
                     account.ChangePassword(_command[1], _command[2]);
-                    DataForWrappers.Shop.RemoveAccount(account); // applying changes
-                    DataForWrappers.Shop.AddAccount(account); // applying changes
+                    DataForWrappers.Shop.UpdateAccount(account); // applying changes
                     _account = account; // applying changes
                     Server.SendAnswer(Client, Server.CreateAnswer("Complete"
                         , $"Congratulate you {account.Name}." + Environment.NewLine +
@@ -212,8 +211,7 @@ namespace MyShopServerMain.core.wrappers.server
                 account.Refill(sum, DataForWrappers.AdminAccount, DataForWrappers.AdminPassword);
                 try 
                 {
-                    DataForWrappers.Shop.RemoveAccount(account); // applying changes
-                    DataForWrappers.Shop.AddAccount(account); // applying changes
+                    DataForWrappers.Shop.UpdateAccount(account); // applying changes
                     _account = account; // applying changes
                 }
                 catch (ArgumentException) // problem when applying
@@ -250,8 +248,7 @@ namespace MyShopServerMain.core.wrappers.server
                 try
                 {
                     account.Withdraw(lot.Price, _command[2]);
-                    DataForWrappers.Shop.RemoveAccount(account); // applying changes
-                    DataForWrappers.Shop.AddAccount(account); // applying changes
+                    DataForWrappers.Shop.UpdateAccount(account); // applying changes
                     _account = account; // applying changes
                     Console.WriteLine($"{_account.Name} have bought {lot.Name} for {lot.Price}");
                     Server.SendAnswer(Client, Server.CreateAnswer("Complete",

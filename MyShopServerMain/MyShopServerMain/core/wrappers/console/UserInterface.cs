@@ -43,13 +43,13 @@ namespace MyShopServerMain.core.wrappers.console
 
         private static void Manage()
         {
-            if (TerminalCommand.Length < 3)
+            if (TerminalCommand.Length < 3) // checking for arguments
             {
                 Console.WriteLine("wrong arguments");
                 return;
             }
 
-            switch (TerminalCommand[3])
+            switch (TerminalCommand[3]) // checking type of action
             {
                 case "add":
                 {
@@ -83,7 +83,7 @@ namespace MyShopServerMain.core.wrappers.console
             {
                 case "account":
                 {
-                    string password;
+                    string password; // getting password
                     while (true)
                     {
                         Console.WriteLine("print new password");
@@ -96,13 +96,13 @@ namespace MyShopServerMain.core.wrappers.console
                         Console.WriteLine("passwords isn't similar");
                     }
 
-                    Account account = new Account(TerminalCommand[2], password);
+                    Account account = new Account(TerminalCommand[2], password); // creating account
 
-                    try
+                    try // adding account
                     {
                         DataForWrappers.Shop.AddAccount(account);
                     }
-                    catch (Exception e)
+                    catch (Exception e) // all mistakes throwing to user console 
                     {
                         Console.WriteLine(e.Message);
                         return;
@@ -112,7 +112,7 @@ namespace MyShopServerMain.core.wrappers.console
 
                 case "goods":
                 {
-                    string picturePath;
+                    string picturePath; // getting picture
                     while (true)
                     {
                         Console.WriteLine("print path to the picture");
@@ -125,10 +125,10 @@ namespace MyShopServerMain.core.wrappers.console
                         Console.WriteLine("wrong path");
                     }
 
-                    Console.WriteLine("print goods description");
+                    Console.WriteLine("print goods description"); // getting description
                     string about = Console.ReadLine();
 
-                    decimal price;
+                    decimal price; // getting price
                     while (true)
                     {
                         try
@@ -143,7 +143,7 @@ namespace MyShopServerMain.core.wrappers.console
                         }
                     }
 
-                    string[] tags;
+                    string[] tags; // getting price
                     while (true)
                     {
                         try
@@ -164,11 +164,11 @@ namespace MyShopServerMain.core.wrappers.console
 
                     ShopLot shopLot = new ShopLot(TerminalCommand[2], picturePath, about, price, tags);
 
-                    try
+                    try // adding shop lot
                     {
                         DataForWrappers.Shop.AddShopLot(shopLot);
                     }
-                    catch (Exception e)
+                    catch (Exception e) // all mistakes throwing to user console
                     {
                         Console.WriteLine(e.Message);
                         return;
@@ -192,17 +192,17 @@ namespace MyShopServerMain.core.wrappers.console
             {
                 case "account":
                 {
-                    Account account;
+                    Account account; // loading account
                     try
                     {
                         account = DataForWrappers.Shop.GetAccount(TerminalCommand[2]);
                     }
-                    catch (Exception e)
+                    catch (Exception e) // all mistakes throwing to user console
                     {
                         Console.WriteLine(e.GetType());
                         return;
                     }
-                    if (account == null)
+                    if (account == null) // checking existing of account
                     {
                         Console.WriteLine("account doesn't exists");
                         return;
@@ -217,7 +217,7 @@ namespace MyShopServerMain.core.wrappers.console
                     {
                         case "Password":
                         {
-                            string newPassword;
+                            string newPassword; // getting new password
                             while (true)
                             {
                                 Console.WriteLine("print new password");
@@ -230,10 +230,10 @@ namespace MyShopServerMain.core.wrappers.console
                                 Console.WriteLine("passwords isn't similar");
                             }
 
-                            Console.WriteLine("print admin password");
+                            Console.WriteLine("print admin password"); // getting admin password
                             var aPassword = Console.ReadLine();
 
-                            try
+                            try  // changing password
                             {
                                 account.ChangePassword(newPassword, AdminAccount, aPassword);
                             }
@@ -256,7 +256,7 @@ namespace MyShopServerMain.core.wrappers.console
                                 "Admin"
                             );
 
-                            switch (Console.ReadLine())
+                            switch (Console.ReadLine()) // getting access rights
                             {
                                 case "User":
                                 {
@@ -289,7 +289,7 @@ namespace MyShopServerMain.core.wrappers.console
                                 }
                             }
 
-                            try
+                            try // changing access rights
                             {
                                 Console.WriteLine("print admin password");
                                 string aPassword = Console.ReadLine();
@@ -305,7 +305,7 @@ namespace MyShopServerMain.core.wrappers.console
 
                         case "Money":
                         {
-                            decimal sum;
+                            decimal sum; // getting sum, converting to decimal
                             while (true)
                             {
                                 try
@@ -323,7 +323,7 @@ namespace MyShopServerMain.core.wrappers.console
                             Console.WriteLine("print admin password");
                             string aPassword = Console.ReadLine();
 
-                            if (sum > 0)
+                            if (sum > 0) // refill/withdraw
                             {
                                 try
                                 {
@@ -358,10 +358,14 @@ namespace MyShopServerMain.core.wrappers.console
                         }
                     }
 
-                    BinaryFormatter bf = new BinaryFormatter();
-                    using (FileStream fs = new FileStream($"{account.Name}.acc", FileMode.Create))
+                    try // updating data
                     {
-                        bf.Serialize(fs, account);
+                        DataForWrappers.Shop.UpdateAccount(account);
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.Message);
+                        return;
                     }
 
                     break;
@@ -369,7 +373,7 @@ namespace MyShopServerMain.core.wrappers.console
 
                 case "goods":
                 {
-                    ShopLot shopLot;
+                    ShopLot shopLot; // loading shop lot
                     try
                     {
                         shopLot = DataForWrappers.Shop.GetShopLot(TerminalCommand[2]);
@@ -379,7 +383,7 @@ namespace MyShopServerMain.core.wrappers.console
                         Console.WriteLine(e.Message);
                         return;
                     }
-                    if (shopLot == null)
+                    if (shopLot == null) // checking for existing
                     {
                         Console.WriteLine("Item doesn't exists");
                         return;
@@ -394,7 +398,7 @@ namespace MyShopServerMain.core.wrappers.console
                     {
                         case "Picture":
                         {
-                            string picturePath;
+                            string picturePath; // getting new picture
                             Console.WriteLine("Chose new picture");
                             picturePath = Console.ReadLine();
                             try
@@ -411,7 +415,7 @@ namespace MyShopServerMain.core.wrappers.console
 
                         case "Price":
                         {
-                            decimal price;
+                            decimal price; // getting price and convert to decimal
                             Console.WriteLine("Print new price");
                             while (true)
                             {
@@ -427,7 +431,7 @@ namespace MyShopServerMain.core.wrappers.console
                                 }
                             }
 
-                            try
+                            try // changing price
                             {
                                 shopLot.EditPrice(price);
                             }
@@ -444,7 +448,7 @@ namespace MyShopServerMain.core.wrappers.console
                             string about;
                             Console.WriteLine("Print new description");
                             about = Console.ReadLine();
-                            try
+                            try // changing about
                             {
                                 shopLot.EditAbout(about);
                             }
@@ -457,10 +461,14 @@ namespace MyShopServerMain.core.wrappers.console
                         }
                     }
 
-                    BinaryFormatter bf = new BinaryFormatter();
-                    using (FileStream fs = new FileStream($"{shopLot.Name}.safer", FileMode.Create))
+                    try // updating data
                     {
-                        bf.Serialize(fs, shopLot);
+                        DataForWrappers.Shop.UpdateShopLot(shopLot);
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.Message);
+                        return;
                     }
 
                     break;
@@ -482,7 +490,7 @@ namespace MyShopServerMain.core.wrappers.console
             {
                 case "account":
                 {
-                    if (TerminalCommand[2] == null)
+                    if (TerminalCommand[2] == null) // if no currently account show all
                     {
                         List<string> accs = DataForWrappers.Shop.GetAccounts();
                         foreach (var acc in accs)
@@ -493,28 +501,28 @@ namespace MyShopServerMain.core.wrappers.console
                     }
 
                     Account account;
-                    try
+                    try // loading account
                     {
                         account = DataForWrappers.Shop.GetAccount(TerminalCommand[2]);
                     }
-                    catch (Exception e)
+                    catch (Exception e) 
                     {
                         Console.WriteLine(e.GetType());
                         return;
                     }
-                    if (account == null)
+                    if (account == null) // checking for existing
                     {
                         Console.WriteLine("account doesn't exists");
                         return;
                     }
 
-                    Console.WriteLine(account.ToString());
+                    Console.WriteLine(account.ToString()); // show to user
                     break;
                 }
 
                 case "goods":
                 {
-                    if (TerminalCommand[2] == null)
+                    if (TerminalCommand[2] == null) // if no currently goods show all
                     {
                         List<string> lots = DataForWrappers.Shop.GetShopLots();
                         foreach (var lot in lots)
@@ -525,7 +533,7 @@ namespace MyShopServerMain.core.wrappers.console
                     }
 
                     ShopLot shopLot;
-                    try
+                    try // loading shop lot
                     {
                         shopLot = DataForWrappers.Shop.GetShopLot(TerminalCommand[2]);
                     }
@@ -534,7 +542,7 @@ namespace MyShopServerMain.core.wrappers.console
                         Console.WriteLine(e.Message);
                         return;
                     }
-                    if (shopLot == null)
+                    if (shopLot == null) // checking for existing
                     {
                         Console.WriteLine("Item doesn't exists");
                         return;
@@ -568,6 +576,7 @@ namespace MyShopServerMain.core.wrappers.console
                     case "yes":
                     {
                         Stop();
+                        // saving shop
                         using (FileStream fs = new FileStream($"{DataForWrappers.Shop.Name}.shop", FileMode.Create))
                         {
                             DataForWrappers.Shop.SaveShop(fs);

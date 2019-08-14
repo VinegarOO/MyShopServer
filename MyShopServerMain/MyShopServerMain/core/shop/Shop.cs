@@ -34,7 +34,7 @@ namespace MyShopServerMain.core.shop
         {
             if (this.GetShopLot(lot.Name) != null)
             {
-                if (!_lots.Contains(lot.Name))
+                if (!_lots.Contains(lot.Name)) // checking for exists
                 {
                     SaveShopLot(lot);
                     _lots.Add(lot.Name);
@@ -52,7 +52,7 @@ namespace MyShopServerMain.core.shop
 
         public void AddShopLot(Stream stream)
         {
-            BinaryFormatter bf = new BinaryFormatter();
+            BinaryFormatter bf = new BinaryFormatter(); // getting shop lot
             ShopLot lot = (ShopLot)bf.Deserialize(stream);
 
             AddShopLot(lot);
@@ -60,7 +60,7 @@ namespace MyShopServerMain.core.shop
 
         public void AddShopLot(string lotPath)
         {
-            BinaryFormatter bf = new BinaryFormatter();
+            BinaryFormatter bf = new BinaryFormatter(); // getting shop lot
             ShopLot lot;
             using (FileStream fs = new FileStream(lotPath, FileMode.Open))
             {
@@ -70,12 +70,19 @@ namespace MyShopServerMain.core.shop
             AddShopLot(lot);
         }
 
+        public void UpdateShopLot(ShopLot shopLot)
+        {
+            BinaryFormatter bf = new BinaryFormatter();
+            FileStream fs = new FileStream($"{shopLot.Name}.safer", FileMode.Create);
+            bf.Serialize(fs, shopLot);
+        }
+
         public void RemoveShopLot(ShopLot lot)
         {
-            if (_lots.Contains(lot.Name))
+            if (_lots.Contains(lot.Name)) // checking for exists
             {
-                File.Delete($"{lot.Name}.safer");
-                _lots.Remove(lot.Name);
+                File.Delete($"{lot.Name}.safer"); // delete file
+                _lots.Remove(lot.Name); // remove from list
             }
             else
             {
@@ -97,7 +104,7 @@ namespace MyShopServerMain.core.shop
             List<string> result = new List<string>();
             foreach (var tLot in _lots)
             {
-                if (File.Exists($"{tLot}.safer"))
+                if (File.Exists($"{tLot}.safer")) // checking for exists
                 {
                     result.Add(tLot);
                 }
@@ -108,12 +115,12 @@ namespace MyShopServerMain.core.shop
         public List<ShopLot> GetShopLots(string[] tags)
         {
             List<ShopLot> result = new List<ShopLot>();
-            foreach (var temp in _lots)
+            foreach (var temp in _lots) // checking all lots
             {
                 ShopLot tLot = GetShopLot(temp);
-                foreach (var tag in tags)
+                foreach (var tag in tags) // checking all tags
                 {
-                    if (tLot.Tags.Contains(tag))
+                    if (tLot.Tags.Contains(tag)) // checking for contains tag
                     {
                         result.Add(tLot);
                         break;
@@ -140,9 +147,9 @@ namespace MyShopServerMain.core.shop
         public ShopLot GetShopLot(string name)
         {
             ShopLot result = null;
-            if (_lots.Contains(name))
+            if (_lots.Contains(name)) // checking for exists in list
             {
-                if (File.Exists($"{name}.safer"))
+                if (File.Exists($"{name}.safer")) // checking for exists in directory
                 {
                     BinaryFormatter bf = new BinaryFormatter();
                     using (FileStream fs = new FileStream($"{name}.safer", FileMode.Open))
@@ -170,11 +177,11 @@ namespace MyShopServerMain.core.shop
 
         public void AddAccount(Account account)
         {
-            if (account.Name == null)
+            if (account.Name == null) // check account name for null
             {
                 throw new ArgumentNullException("account.Name", "Name can't be null");
             }
-            if (_accounts.Contains(account.Name))
+            if (_accounts.Contains(account.Name)) // check account name for exists
             {
                 throw new ArgumentException("This account name already exists");
             }
@@ -202,6 +209,13 @@ namespace MyShopServerMain.core.shop
             AddAccount(account);
         }
 
+        public void UpdateAccount(Account account)
+        {
+            BinaryFormatter bf = new BinaryFormatter();
+            FileStream fs = new FileStream($"{account.Name}.acc", FileMode.Create);
+            bf.Serialize(fs, account);
+        }
+
         public void RemoveAccount(Account account)
         {
             if (_lots.Contains(account.Name))
@@ -227,9 +241,9 @@ namespace MyShopServerMain.core.shop
         public List<string> GetAccounts()
         {
             List<string> result = new List<string>();
-            foreach (var tAcc in _accounts)
+            foreach (var tAcc in _accounts) // search in all accounts
             {
-                if (File.Exists($"{tAcc}.acc"))
+                if (File.Exists($"{tAcc}.acc")) // if account exists
                 {
                     result.Add(tAcc);
                 }
@@ -237,15 +251,15 @@ namespace MyShopServerMain.core.shop
             return result;
         }
 
-        /*public List<string> GetAccounts(AccessRights accessRights)
+        /*public List<string> GetAccounts(AccessRights accessRights) // finding account by access rights
         {
             List<string> result = new List<string>();
-            foreach (var tAcc in _accounts)
+            foreach (var tAcc in _accounts) // search in all accounts
             {
-                if (File.Exists($"{tAcc}.acc"))
+                if (File.Exists($"{tAcc}.acc")) // if account exists
                 {
                     Account tempAccount = GetAccount($"{tAcc}.acc");
-                    if (tempAccount.AccessRight == accessRights)
+                    if (tempAccount.AccessRight == accessRights) // if access rights is correct
                     {
                         result.Add(tAcc);
                     }
@@ -257,12 +271,12 @@ namespace MyShopServerMain.core.shop
         public Account GetAccount(string name)
         {
             Account result = null;
-            if (_accounts.Contains(name))
+            if (_accounts.Contains(name)) // if account exists
             {
-                if (File.Exists($"{name}.acc"))
+                if (File.Exists($"{name}.acc")) // if file exists
                 {
                     BinaryFormatter bf = new BinaryFormatter();
-                    using (FileStream fs = new FileStream($"{name}.acc", FileMode.Open))
+                    using (FileStream fs = new FileStream($"{name}.acc", FileMode.Open)) // load from file
                     {
                         result = (Account)bf.Deserialize(fs);
                     }
@@ -271,7 +285,7 @@ namespace MyShopServerMain.core.shop
             return result;
         }
 
-        public bool SelfChecking()
+        public bool SelfChecking() // checking for corrupt in list or in directory
         {
             foreach (var tLot in _lots)
             {
