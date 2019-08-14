@@ -14,10 +14,11 @@ namespace MyShopServerMain.core.wrappers
         internal static readonly Shop Shop;
         internal static string[] TerminalCommand;
         internal static readonly Account AdminAccount;
+        internal const string AdminPassword = "qwerty";
 
         static DataForWrappers()
         {
-            AdminAccount = new Account("Admin", "qwerty", AccessRights.Admin);
+            AdminAccount = new Account("Admin", AdminPassword, AccessRights.Admin);
             while (true)
             {
                 Console.WriteLine("enter password");

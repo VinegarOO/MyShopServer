@@ -111,15 +111,15 @@ namespace MyShopServerMain.core.shop
             }
         }
 
-        internal void Refill(decimal sum, Account account, string aPassword)
+        internal void Refill(decimal sum, Account aAccount, string aPassword)
         {
-            if (account.AccessRight == AccessRights.Admin)
+            if (aAccount.AccessRight == AccessRights.Admin)
             {
                 if (sum < 0)
                 {
                     throw new ArgumentException("you can't refill sum below zero");
                 }
-                if (account.Verify(aPassword))
+                if (aAccount.Verify(aPassword))
                 {
                     _money += sum;
                 }

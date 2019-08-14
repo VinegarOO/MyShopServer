@@ -79,7 +79,7 @@ namespace MyShopServerMain.core.shop
             }
             else
             {
-                throw new ArgumentException("Shop lot is not in the Shop", "lot");
+                throw new ArgumentException("Shop lot is not exists", "lot");
             }
         }
 
@@ -121,11 +121,6 @@ namespace MyShopServerMain.core.shop
                 }
             }
             return result;
-        }
-
-        public List<string> GetShopLotsList()
-        {
-            return _lots;
         }
 
         public void SaveShop(Stream stream)
@@ -216,7 +211,7 @@ namespace MyShopServerMain.core.shop
             }
             else
             {
-                throw new ArgumentException("Shop lot is not in the Shop", "account");
+                throw new ArgumentException("Account is not exists", "account");
             }
         }
 

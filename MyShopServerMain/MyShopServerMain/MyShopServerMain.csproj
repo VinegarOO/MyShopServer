@@ -49,7 +49,6 @@
   <ItemGroup>
     <Compile Include="core\wrappers\DataForWrappers.cs" />
     <Compile Include="core\wrappers\server\ConnectionsHolder.cs" />
-    <Compile Include="core\wrappers\server\Menu.cs" />
     <Compile Include="core\wrappers\server\Server.cs" />
     <Compile Include="core\shop\AccessRights.cs" />
     <Compile Include="core\shop\Account.cs" />

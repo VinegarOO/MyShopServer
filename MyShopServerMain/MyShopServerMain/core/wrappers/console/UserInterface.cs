@@ -516,7 +516,7 @@ namespace MyShopServerMain.core.wrappers.console
                 {
                     if (TerminalCommand[2] == null)
                     {
-                        List<string> lots = DataForWrappers.Shop.GetShopLotsList();
+                        List<string> lots = DataForWrappers.Shop.GetShopLots();
                         foreach (var lot in lots)
                         {
                             Console.WriteLine(lot);
