@@ -2,23 +2,27 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Threading;
 using MyShopServerMain.core.shop;
+using MyShopServerMain.core.wrappers.server;
 using static MyShopServerMain.core.wrappers.DataForWrappers;
 
 namespace MyShopServerMain.core.wrappers.console
 {
     public static class UserInterface
     {
+        private static readonly Thread server = new Thread(Server.WaitingConnection);
+        private static readonly Dictionary<string, Action> commands = new Dictionary<string, Action>
+        {
+            {"start", Start },
+            {"exit", Exit },
+            {"manage", Manage },
+            {"stop", Stop },
+            {"help", Help }
+        };
+
         public static void Menu()
         {
-            Dictionary<string, Action> commands = new Dictionary<string, Action>
-            {
-                {"start", Start },
-                {"exit", Exit },
-                {"manage", Manage },
-                {"stop", Stop },
-                {"help", Help }
-            };
             while (true)
             {
                 Console.WriteLine("Waiting for command");
@@ -38,6 +42,7 @@ namespace MyShopServerMain.core.wrappers.console
 
         private static void Start()
         {
+            server.Start();
             // Initialise all server Threads
         }
 
@@ -563,6 +568,7 @@ namespace MyShopServerMain.core.wrappers.console
 
         private static void Stop()
         {
+            server.Abort();
             Console.WriteLine("Stopping server");
         }
 
