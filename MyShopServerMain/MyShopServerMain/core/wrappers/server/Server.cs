@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -8,7 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using MyShopServerMain.core.shop;
-using static MyShopServerMain.core.wrappers.server.ConnectionsHolder;
+using static MyShopServerMain.core.wrappers.server.RequestsProcessor;
 
 namespace MyShopServerMain.core.wrappers.server
 {
@@ -41,13 +42,34 @@ namespace MyShopServerMain.core.wrappers.server
         {
             byte[] messageBytes = DataForWrappers.encoding.GetBytes(message);
 
+            messageBytes = messageBytes.Concat(CompareImage(image)).ToArray();
+
+
+        }
+
+        internal static void SendAnswer(IPAddress client, string message, List<string> images)
+        {
+            byte[] messageBytes = DataForWrappers.encoding.GetBytes(message);
+
+            IEnumerable<byte> b_images = new byte[0];
+
+            foreach (var image in images)
+            {
+                b_images = b_images.Concat(CompareImage(image));
+            }
+
+            messageBytes = messageBytes.Concat(b_images).ToArray();
+
+
+        }
+
+        internal static IEnumerable<byte> CompareImage(string image)
+        {
             byte[] img_start = DataForWrappers.encoding.GetBytes("<image>");
             byte[] img_end = DataForWrappers.encoding.GetBytes("</image>");
             byte[] img = File.ReadAllBytes(image);
 
-            messageBytes = messageBytes.Concat(img_start).Concat(img).Concat(img_end).ToArray();
-
-
+            return img_start.Concat(img).Concat(img_end);
         }
 
         internal static string CreateAnswer(string theme, string text)

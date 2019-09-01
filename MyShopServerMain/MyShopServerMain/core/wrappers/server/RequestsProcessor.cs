@@ -4,7 +4,7 @@ using MyShopServerMain.core.shop;
 
 namespace MyShopServerMain.core.wrappers.server
 {
-    internal static class ConnectionsHolder
+    internal static class RequestsProcessor
     {
         private delegate void MyDelegate(RequestHolder request);
 
@@ -134,28 +134,34 @@ namespace MyShopServerMain.core.wrappers.server
         private static void GetShopLotsList(RequestHolder request) // [1]void
         {
             string list = string.Empty;
+            List<string> images = new List<string>();
+
             foreach (var lot in DataForWrappers.Shop.GetShopLots()) // filling list
             {
-                list += lot;
+                list += lot.Name;
                 list += Environment.NewLine;
+                images.Add("_" + lot.Picture);
             }
             Server.SendAnswer(request.client, Server.CreateAnswer("Complete",
-                list));
+                list), images);
         }
 
         private static void GetShopLots(RequestHolder request) // [1]-[infinity]tags
         {
             string result = string.Empty;
+            List<string> images = new List<string>();
+
             string[] tags = new string[request.command.Length - 1]; // getting tags
 
             foreach (var temp in DataForWrappers.Shop.GetShopLots(tags)) // refactor list of results
             {
-                result += temp;
+                result += temp.Name;
                 result += Environment.NewLine;
+                images.Add("_" + temp.Picture);
             }
 
             Server.SendAnswer(request.client, Server.CreateAnswer("Complete",
-                result));
+                result), images);
         }
 
         private static void Refill(RequestHolder request) // [1]sum [2]my_account_name [3]verify

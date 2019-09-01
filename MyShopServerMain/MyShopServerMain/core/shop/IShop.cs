@@ -8,7 +8,7 @@ namespace MyShopServerMain.core.shop
 
         void RemoveShopLot(ShopLot lot);
 
-        List<string> GetShopLots();
+        List<ShopLot> GetShopLots();
 
         ShopLot GetShopLot(string name);
     }

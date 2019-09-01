@@ -99,14 +99,14 @@ namespace MyShopServerMain.core.shop
             }
         }
 
-        public List<string> GetShopLots()
+        public List<ShopLot> GetShopLots()
         {
-            List<string> result = new List<string>();
+            List<ShopLot> result = new List<ShopLot>();
             foreach (var tLot in _lots)
             {
                 if (File.Exists($"{tLot}.safer")) // checking for exists
                 {
-                    result.Add(tLot);
+                    result.Add(GetShopLot(tLot));
                 }
             }
             return result;

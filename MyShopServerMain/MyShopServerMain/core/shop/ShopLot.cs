@@ -12,6 +12,11 @@ namespace MyShopServerMain.core.shop
         internal string Picture { get; private set; }
         internal string[] Tags { get; private set; }
 
+        private bool ThumbnailCallback()
+        {
+            return false;
+        }
+
         internal ShopLot(string tName, string picturePath, string tAbout, decimal tPrice, string[] tags)
         {
             if (tName == null)
@@ -25,7 +30,9 @@ namespace MyShopServerMain.core.shop
             Name = tName;
 
             Image temp = Image.FromFile(picturePath);
-            temp.Save(picturePath);
+            temp = temp.GetThumbnailImage(100, 100
+                , new Image.GetThumbnailImageAbort(ThumbnailCallback), IntPtr.Zero);
+            temp.Save("_" + picturePath);
             Picture = picturePath;
 
             if (tPrice > 0)
@@ -52,7 +59,9 @@ namespace MyShopServerMain.core.shop
         internal void EditPicture(string picturePath)
         {
             Image temp = Image.FromFile(picturePath);
-            temp.Save(picturePath);
+            temp = temp.GetThumbnailImage(100,100
+                , new Image.GetThumbnailImageAbort(ThumbnailCallback), IntPtr.Zero);
+            temp.Save("_" + picturePath);
             Picture = picturePath;
         }
 
