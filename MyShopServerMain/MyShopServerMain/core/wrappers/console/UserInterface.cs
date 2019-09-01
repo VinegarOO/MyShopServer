@@ -524,10 +524,10 @@ namespace MyShopServerMain.core.wrappers.console
                 {
                     if (TerminalCommand[2] == null) // if no currently goods show all
                     {
-                        List<string> lots = DataForWrappers.Shop.GetShopLots();
+                        List<ShopLot> lots = DataForWrappers.Shop.GetShopLots();
                         foreach (var lot in lots)
                         {
-                            Console.WriteLine(lot);
+                            Console.WriteLine(lot + Environment.NewLine);
                         }
                         return;
                     }
