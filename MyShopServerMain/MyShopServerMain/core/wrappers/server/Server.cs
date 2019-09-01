@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Drawing;
+using System.IO;
+using System.Linq;
 using System.Net;
 using System.Runtime.Remoting.Messaging;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using MyShopServerMain.core.shop;
 using static MyShopServerMain.core.wrappers.server.ConnectionsHolder;
 
@@ -10,37 +14,38 @@ namespace MyShopServerMain.core.wrappers.server
 {
     static class Server
     {
-        internal static void WaitingCommand(Shop shop)
-        {
-
-        }
-
-        internal static void WaitingConnection(Shop shop)
+        internal static void WaitingConnection()
         {
             while (true)
             {
                 // Get connection
-                // Check LogIn
-                // Add connection
-                // Send port
-                // Send token
+
+                IPAddress client = null;
+                byte[] request = null;
+
+                // process request
+                var t = new RequestHolder(client, request);
+
+                ThreadPool.QueueUserWorkItem(ProcessRequest, t);
             }
         }
 
         internal static void SendAnswer(IPAddress client, string message)
         {
-            byte[] messageBytes;
-            Encoding encoding = new UTF8Encoding();
-            messageBytes = encoding.GetBytes(message);
+            byte[] messageBytes = DataForWrappers.encoding.GetBytes(message);
 
 
         }
 
-        internal static void SendAnswer(IPAddress client, string message, Image image)
+        internal static void SendAnswer(IPAddress client, string message, string image)
         {
-            byte[] messageBytes;
-            Encoding encoding = new UTF8Encoding();
-            messageBytes = encoding.GetBytes(message);
+            byte[] messageBytes = DataForWrappers.encoding.GetBytes(message);
+
+            byte[] img_start = DataForWrappers.encoding.GetBytes("<image>");
+            byte[] img_end = DataForWrappers.encoding.GetBytes("</image>");
+            byte[] img = File.ReadAllBytes(image);
+
+            messageBytes = messageBytes.Concat(img_start).Concat(img).Concat(img_end).ToArray();
 
 
         }

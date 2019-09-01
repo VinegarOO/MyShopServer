@@ -9,7 +9,7 @@ namespace MyShopServerMain.core.shop
         internal string Name { get; private set; }
         internal decimal Price { get; private set; }
         internal string About { get; private set; }
-        internal Image Picture { get; private set; }
+        internal string Picture { get; private set; }
         internal string[] Tags { get; private set; }
 
         internal ShopLot(string tName, string picturePath, string tAbout, decimal tPrice, string[] tags)
@@ -24,11 +24,9 @@ namespace MyShopServerMain.core.shop
             }
             Name = tName;
 
-            if (picturePath == null)
-            {
-                throw new ArgumentNullException("picturePath", "wrong pass to pricture");
-            }
-            Picture = Image.FromFile(picturePath);
+            Image temp = Image.FromFile(picturePath);
+            temp.Save(picturePath);
+            Picture = picturePath;
 
             if (tPrice > 0)
             {
@@ -53,11 +51,9 @@ namespace MyShopServerMain.core.shop
 
         internal void EditPicture(string picturePath)
         {
-            if (picturePath == null)
-            {
-                throw new ArgumentNullException("picturePath");
-            }
-            Picture = Image.FromFile(picturePath);
+            Image temp = Image.FromFile(picturePath);
+            temp.Save(picturePath);
+            Picture = picturePath;
         }
 
         internal void EditPrice(decimal tPrice)
