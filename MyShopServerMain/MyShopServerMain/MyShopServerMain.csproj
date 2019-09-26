@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="core\wrappers\DataForWrappers.cs" />
+    <Compile Include="core\wrappers\DB\MyDB.cs" />
     <Compile Include="core\wrappers\server\RequestsProcessor.cs" />
     <Compile Include="core\wrappers\server\RequestHolder.cs" />
     <Compile Include="core\wrappers\server\Server.cs" />

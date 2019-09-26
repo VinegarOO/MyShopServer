@@ -31,11 +31,16 @@ namespace MyShopServerMain.core.wrappers.server
             }
         }
 
+        private static void Send(IPAddress client, byte[] message)
+        {
+            // sending answer
+        }
+
         internal static void SendAnswer(IPAddress client, string message)
         {
             byte[] messageBytes = DataForWrappers.encoding.GetBytes(message);
 
-
+            Send(client, messageBytes);
         }
 
         internal static void SendAnswer(IPAddress client, string message, string image)
@@ -44,7 +49,7 @@ namespace MyShopServerMain.core.wrappers.server
 
             messageBytes = messageBytes.Concat(CompareImage(image)).ToArray();
 
-
+            Send(client, messageBytes);
         }
 
         internal static void SendAnswer(IPAddress client, string message, List<string> images)
@@ -60,7 +65,7 @@ namespace MyShopServerMain.core.wrappers.server
 
             messageBytes = messageBytes.Concat(b_images).ToArray();
 
-
+            Send(client, messageBytes);
         }
 
         internal static IEnumerable<byte> CompareImage(string image)

@@ -622,10 +622,7 @@ namespace MyShopServerMain.core.wrappers.console
                 {
                     case "start":
                     {
-                        Console.WriteLine(
-                            "" + Environment.NewLine +
-                            ""
-                        );
+                        Console.WriteLine("will start server");
                         break;
                     }
 
@@ -648,10 +645,7 @@ namespace MyShopServerMain.core.wrappers.console
 
                     case "stop":
                     {
-                        Console.WriteLine(
-                            "" + Environment.NewLine +
-                            ""
-                        );
+                        Console.WriteLine("will stop server");
                         break;
                     }
 
