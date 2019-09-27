@@ -9,14 +9,14 @@ namespace MyShopServerMain.core.wrappers.server
 {
     internal class RequestHolder
     {
-        internal readonly IPAddress client = null;
-        internal readonly byte[] request = null;
-        internal string[] command;
+        internal readonly IPAddress Client = null;
+        internal readonly byte[] Request = null;
+        internal string[] Command;
 
-        internal RequestHolder(IPAddress t_client, byte[] t_request)
+        internal RequestHolder(IPAddress tClient, byte[] tRequest)
         {
-            client = t_client;
-            request = t_request;
+            Client = tClient;
+            Request = tRequest;
         }
     }
 }

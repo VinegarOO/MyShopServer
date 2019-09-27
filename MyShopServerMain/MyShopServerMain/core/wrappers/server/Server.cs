@@ -38,14 +38,14 @@ namespace MyShopServerMain.core.wrappers.server
 
         internal static void SendAnswer(IPAddress client, string message)
         {
-            byte[] messageBytes = DataForWrappers.encoding.GetBytes(message);
+            byte[] messageBytes = DataForWrappers.Encoding.GetBytes(message);
 
             Send(client, messageBytes);
         }
 
         internal static void SendAnswer(IPAddress client, string message, string image)
         {
-            byte[] messageBytes = DataForWrappers.encoding.GetBytes(message);
+            byte[] messageBytes = DataForWrappers.Encoding.GetBytes(message);
 
             messageBytes = messageBytes.Concat(CompareImage(image)).ToArray();
 
@@ -54,27 +54,27 @@ namespace MyShopServerMain.core.wrappers.server
 
         internal static void SendAnswer(IPAddress client, string message, List<string> images)
         {
-            byte[] messageBytes = DataForWrappers.encoding.GetBytes(message);
+            byte[] messageBytes = DataForWrappers.Encoding.GetBytes(message);
 
-            IEnumerable<byte> b_images = new byte[0];
+            IEnumerable<byte> bImages = new byte[0];
 
             foreach (var image in images)
             {
-                b_images = b_images.Concat(CompareImage(image));
+                bImages = bImages.Concat(CompareImage(image));
             }
 
-            messageBytes = messageBytes.Concat(b_images).ToArray();
+            messageBytes = messageBytes.Concat(bImages).ToArray();
 
             Send(client, messageBytes);
         }
 
         internal static IEnumerable<byte> CompareImage(string image)
         {
-            byte[] img_start = DataForWrappers.encoding.GetBytes("<image>");
-            byte[] img_end = DataForWrappers.encoding.GetBytes("</image>");
+            byte[] imgStart = DataForWrappers.Encoding.GetBytes("<image>");
+            byte[] imgEnd = DataForWrappers.Encoding.GetBytes("</image>");
             byte[] img = File.ReadAllBytes(image);
 
-            return img_start.Concat(img).Concat(img_end);
+            return imgStart.Concat(img).Concat(imgEnd);
         }
 
         internal static string CreateAnswer(string theme, string text)

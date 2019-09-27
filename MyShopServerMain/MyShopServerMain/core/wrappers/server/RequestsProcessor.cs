@@ -8,7 +8,7 @@ namespace MyShopServerMain.core.wrappers.server
     {
         private delegate void MyDelegate(RequestHolder request);
 
-        internal static void ProcessRequest(Object t_request)
+        internal static void ProcessRequest(Object tRequest)
         {
             Dictionary<string, MyDelegate> commands = new Dictionary<string, MyDelegate>
                 {
@@ -21,18 +21,18 @@ namespace MyShopServerMain.core.wrappers.server
                     {"Buy", Buy }
                 };
 
-            RequestHolder request = t_request as RequestHolder;
-            string t_command = DataForWrappers.encoding.GetString(request.request);
+            RequestHolder request = tRequest as RequestHolder;
+            string tCommand = DataForWrappers.Encoding.GetString(request.Request);
 
-            request.command = t_command.Split();
+            request.Command = tCommand.Split();
 
-            if (commands.ContainsKey(request.command[0])) // processing command[0]
+            if (commands.ContainsKey(request.Command[0])) // processing command[0]
             {
-                commands[request.command[0]](request);
+                commands[request.Command[0]](request);
             }
             else
             {
-                Server.SendAnswer(request.client, Server.CreateAnswer("Error", "Not a command."));
+                Server.SendAnswer(request.Client, Server.CreateAnswer("Error", "Not a command."));
             }
         }
 
@@ -47,86 +47,86 @@ namespace MyShopServerMain.core.wrappers.server
                 return;
             }*/
 
-            var account = DataForWrappers.Shop.GetAccount(request.command[4]); // loading account
+            var account = DataForWrappers.Shop.GetAccount(request.Command[4]); // loading account
             if (account == null)
             {
-                Server.SendAnswer(request.client, Server.CreateAnswer("Error", "No account."));
+                Server.SendAnswer(request.Client, Server.CreateAnswer("Error", "No account."));
                 return;
             }
 
-            if (!account.Verify(request.command[3])) // checking password
+            if (!account.Verify(request.Command[3])) // checking password
             {
-                Server.SendAnswer(request.client, Server.CreateAnswer("Error", "Wrong password."));
+                Server.SendAnswer(request.Client, Server.CreateAnswer("Error", "Wrong password."));
                 return;
             }
 
-            Account newAccount = new Account(request.command[1], request.command[2]);
+            Account newAccount = new Account(request.Command[1], request.Command[2]);
 
             try // add account to shop
             {
                 DataForWrappers.Shop.AddAccount(newAccount);
-                Server.SendAnswer(request.client, Server.CreateAnswer("Complete"
+                Server.SendAnswer(request.Client, Server.CreateAnswer("Complete"
                     , $"Congratulate you {account.Name}." + Environment.NewLine +
-                      $"Account for {request.command[1]} successfully created."));
+                      $"Account for {request.Command[1]} successfully created."));
             }
             catch (ArgumentException e) // problem with naming
             {
-                Server.SendAnswer(request.client, Server.CreateAnswer("Error", e.Message));
+                Server.SendAnswer(request.Client, Server.CreateAnswer("Error", e.Message));
             }
             catch // other problems
             {
-                Server.SendAnswer(request.client, Server.CreateAnswer("Error",
+                Server.SendAnswer(request.Client, Server.CreateAnswer("Error",
                     "Something goes wrong, try again."));
             }
         }
 
         private static void ChangePassword(RequestHolder request) // [1]new_password [2]password [3]my_account_name
         {
-            Account account = DataForWrappers.Shop.GetAccount(request.command[3]); // loading an account
+            Account account = DataForWrappers.Shop.GetAccount(request.Command[3]); // loading an account
             if (account == null)
             {
-                Server.SendAnswer(request.client, Server.CreateAnswer("Error", "404"));
+                Server.SendAnswer(request.Client, Server.CreateAnswer("Error", "404"));
                 return;
             }
 
             try
             {
-                account.ChangePassword(request.command[1], request.command[2]);
+                account.ChangePassword(request.Command[1], request.Command[2]);
                 DataForWrappers.Shop.UpdateAccount(account); // applying changes
-                Server.SendAnswer(request.client, Server.CreateAnswer("Complete"
+                Server.SendAnswer(request.Client, Server.CreateAnswer("Complete"
                     , $"Congratulate you {account.Name}." + Environment.NewLine +
                       "Password has changed."));
             }
             catch (MemberAccessException e) // problem with changing password
             {
-                Server.SendAnswer(request.client, Server.CreateAnswer("Error"
+                Server.SendAnswer(request.Client, Server.CreateAnswer("Error"
                     , e.Message));
             }
             catch (ArgumentException) // problem with applying changes
             {
-                Server.SendAnswer(request.client, Server.CreateAnswer("Error"
+                Server.SendAnswer(request.Client, Server.CreateAnswer("Error"
                     , "Something wrong with your account."
                     + Environment.NewLine +
                     "Please contact with our support."));
             }
             catch // other problems
             {
-                Server.SendAnswer(request.client, Server.CreateAnswer("Error",
+                Server.SendAnswer(request.Client, Server.CreateAnswer("Error",
                     "Something goes wrong, try again."));
             }
         }
 
         private static void GetShopLot(RequestHolder request) // [1]name
         {
-            ShopLot result = DataForWrappers.Shop.GetShopLot(request.command[1]); // loading shoplot
+            ShopLot result = DataForWrappers.Shop.GetShopLot(request.Command[1]); // loading shoplot
             if (result == null)
             {
-                Server.SendAnswer(request.client, Server.CreateAnswer("Error",
+                Server.SendAnswer(request.Client, Server.CreateAnswer("Error",
                     "There is no similar goods."));
                 return;
             }
 
-            Server.SendAnswer(request.client, Server.CreateAnswer("Complete",
+            Server.SendAnswer(request.Client, Server.CreateAnswer("Complete",
                 $"{result.Name} - {result.Price}" + Environment.NewLine +
                 $"{result.About}"), result.Picture);
         }
@@ -142,7 +142,7 @@ namespace MyShopServerMain.core.wrappers.server
                 list += Environment.NewLine;
                 images.Add("_" + lot.Picture);
             }
-            Server.SendAnswer(request.client, Server.CreateAnswer("Complete",
+            Server.SendAnswer(request.Client, Server.CreateAnswer("Complete",
                 list), images);
         }
 
@@ -151,7 +151,7 @@ namespace MyShopServerMain.core.wrappers.server
             string result = string.Empty;
             List<string> images = new List<string>();
 
-            string[] tags = new string[request.command.Length - 1]; // getting tags
+            string[] tags = new string[request.Command.Length - 1]; // getting tags
 
             foreach (var temp in DataForWrappers.Shop.GetShopLots(tags)) // refactor list of results
             {
@@ -160,34 +160,34 @@ namespace MyShopServerMain.core.wrappers.server
                 images.Add("_" + temp.Picture);
             }
 
-            Server.SendAnswer(request.client, Server.CreateAnswer("Complete",
+            Server.SendAnswer(request.Client, Server.CreateAnswer("Complete",
                 result), images);
         }
 
         private static void Refill(RequestHolder request) // [1]sum [2]my_account_name [3]verify
         {
-            if (request.command[3] != "true") // checking verify
+            if (request.Command[3] != "true") // checking verify
             {
-                Server.SendAnswer(request.client, Server.CreateAnswer("Error",
+                Server.SendAnswer(request.Client, Server.CreateAnswer("Error",
                     "I can't do it."));
                 return;
             }
 
-            Account account = DataForWrappers.Shop.GetAccount(request.command[2]); // loading account
+            Account account = DataForWrappers.Shop.GetAccount(request.Command[2]); // loading account
             if (account == null)
             {
-                Server.SendAnswer(request.client, Server.CreateAnswer("Error", "404"));
+                Server.SendAnswer(request.Client, Server.CreateAnswer("Error", "404"));
                 return;
             }
 
             decimal sum; // checking sum for being decimal
             try
             {
-                sum = Convert.ToDecimal(request.command[1]);
+                sum = Convert.ToDecimal(request.Command[1]);
             }
             catch
             {
-                Server.SendAnswer(request.client, Server.CreateAnswer("Error",
+                Server.SendAnswer(request.Client, Server.CreateAnswer("Error",
                     "Not a number."));
                 return;
             }
@@ -199,63 +199,63 @@ namespace MyShopServerMain.core.wrappers.server
             }
             catch (ArgumentException) // problem when applying
             {
-                Server.SendAnswer(request.client, Server.CreateAnswer("Error"
+                Server.SendAnswer(request.Client, Server.CreateAnswer("Error"
                     , "Something wrong with your account."
                       + Environment.NewLine +
                       "Please contact with our support."));
             }
             catch // other problem
             {
-                Server.SendAnswer(request.client, Server.CreateAnswer("Error",
+                Server.SendAnswer(request.Client, Server.CreateAnswer("Error",
                     "Something goes wrong, try again."));
             }
         }
 
         private static void Buy(RequestHolder request) // [1]item [2]password [3]my_account_name
         {
-            ShopLot lot = DataForWrappers.Shop.GetShopLot(request.command[1]); // loading shoplot
+            ShopLot lot = DataForWrappers.Shop.GetShopLot(request.Command[1]); // loading shoplot
             if (lot == null)
             {
-                Server.SendAnswer(request.client, Server.CreateAnswer("Error",
+                Server.SendAnswer(request.Client, Server.CreateAnswer("Error",
                     "There is no similar goods."));
                 return;
             }
 
-            Account account = DataForWrappers.Shop.GetAccount(request.command[3]); // loading account
+            Account account = DataForWrappers.Shop.GetAccount(request.Command[3]); // loading account
             if (account == null)
             {
-                Server.SendAnswer(request.client, Server.CreateAnswer("Error", "404"));
+                Server.SendAnswer(request.Client, Server.CreateAnswer("Error", "404"));
                 return;
             }
 
             try
             {
-                account.Withdraw(lot.Price, request.command[2]);
+                account.Withdraw(lot.Price, request.Command[2]);
                 DataForWrappers.Shop.UpdateAccount(account); // applying changes
-                Console.WriteLine($"{request.command[3]} have bought {lot.Name} for {lot.Price}");
-                Server.SendAnswer(request.client, Server.CreateAnswer("Complete",
+                Console.WriteLine($"{request.Command[3]} have bought {lot.Name} for {lot.Price}");
+                Server.SendAnswer(request.Client, Server.CreateAnswer("Complete",
                     $"You have bought {lot.Name}"));
             }
             catch (ArgumentOutOfRangeException e) // problem with withdraw
             {
-                Server.SendAnswer(request.client, Server.CreateAnswer("Error",
+                Server.SendAnswer(request.Client, Server.CreateAnswer("Error",
                     e.Message));
             }
             catch (ArgumentException) // problem with applying
             {
-                Server.SendAnswer(request.client, Server.CreateAnswer("Error"
+                Server.SendAnswer(request.Client, Server.CreateAnswer("Error"
                     , "Something wrong with your account."
                       + Environment.NewLine +
                       "Please contact with our support."));
             }
             catch (MemberAccessException e) // problem with withdraw
             {
-                Server.SendAnswer(request.client, Server.CreateAnswer("Error",
+                Server.SendAnswer(request.Client, Server.CreateAnswer("Error",
                     e.Message));
             }
             catch // other problem
             {
-                Server.SendAnswer(request.client, Server.CreateAnswer("Error",
+                Server.SendAnswer(request.Client, Server.CreateAnswer("Error",
                     "Something goes wrong, try again."));
             }
         }

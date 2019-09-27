@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace MyShopServerMain.core.wrappers.DB
 {
-    public static class MyDB
+    public static class MyDb
     {
         private static HashSet<Type> _typesOfData = new HashSet<Type>();
 
@@ -28,7 +28,7 @@ namespace MyShopServerMain.core.wrappers.DB
 
                 using (FileStream fs = new FileStream(dataType.Name + "/" + name + ".shda", FileMode.Create))
                 {
-                    DataForWrappers.bf.Serialize(fs, data);
+                    DataForWrappers.Bf.Serialize(fs, data);
                 }
 
                 return true;
@@ -51,9 +51,13 @@ namespace MyShopServerMain.core.wrappers.DB
 
         public static HashSet<string> GetListOfData(Type typeOfData)
         {
+            HashSet<string> result = new HashSet<string>();
+            
             if (_typesOfData.Contains(typeOfData))
             {
 
+
+                return result;
             }
 
             return null;

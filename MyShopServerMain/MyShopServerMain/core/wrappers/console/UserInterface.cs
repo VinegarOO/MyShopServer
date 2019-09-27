@@ -11,8 +11,8 @@ namespace MyShopServerMain.core.wrappers.console
 {
     public static class UserInterface
     {
-        private static readonly Thread server = new Thread(Server.WaitingConnection);
-        private static readonly Dictionary<string, Action> commands = new Dictionary<string, Action>
+        private static readonly Thread Server = new Thread(server.Server.WaitingConnection);
+        private static readonly Dictionary<string, Action> Commands = new Dictionary<string, Action>
         {
             {"start", Start },
             {"exit", Exit },
@@ -29,9 +29,9 @@ namespace MyShopServerMain.core.wrappers.console
                 Console.Write("Admin >> ");
                 TerminalCommand = Console.ReadLine().Split();
 
-                if (commands.ContainsKey(TerminalCommand[0]))
+                if (Commands.ContainsKey(TerminalCommand[0]))
                 {
-                    commands[TerminalCommand[0]]();
+                    Commands[TerminalCommand[0]]();
                 }
                 else
                 {
@@ -42,7 +42,7 @@ namespace MyShopServerMain.core.wrappers.console
 
         private static void Start()
         {
-            server.Start();
+            Server.Start();
             // Initialise all server Threads
         }
 
@@ -568,7 +568,7 @@ namespace MyShopServerMain.core.wrappers.console
 
         private static void Stop()
         {
-            server.Abort();
+            Server.Abort();
             Console.WriteLine("Stopping server");
         }
 
