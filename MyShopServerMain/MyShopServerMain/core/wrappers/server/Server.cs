@@ -43,7 +43,7 @@ namespace MyShopServerMain.core.wrappers.server
             Send(client, messageBytes);
         }
 
-        internal static void SendAnswer(IPAddress client, string message, string image)
+        internal static void SendAnswer(IPAddress client, string message, Image image)
         {
             byte[] messageBytes = DataForWrappers.Encoding.GetBytes(message);
 
@@ -52,7 +52,7 @@ namespace MyShopServerMain.core.wrappers.server
             Send(client, messageBytes);
         }
 
-        internal static void SendAnswer(IPAddress client, string message, List<string> images)
+        internal static void SendAnswer(IPAddress client, string message, List<Image> images)
         {
             byte[] messageBytes = DataForWrappers.Encoding.GetBytes(message);
 
@@ -68,11 +68,20 @@ namespace MyShopServerMain.core.wrappers.server
             Send(client, messageBytes);
         }
 
-        internal static IEnumerable<byte> CompareImage(string image)
+        internal static IEnumerable<byte> CompareImage(Image image)
         {
             byte[] imgStart = DataForWrappers.Encoding.GetBytes("<image>");
             byte[] imgEnd = DataForWrappers.Encoding.GetBytes("</image>");
-            byte[] img = File.ReadAllBytes(image);
+            byte[] img;
+            if (image == null)
+            {
+                img = new byte[1];
+            }
+            else
+            {
+                ImageConverter ic = new ImageConverter();
+                img = (byte[])ic.ConvertTo(image, typeof(byte[]));
+            }
 
             return imgStart.Concat(img).Concat(imgEnd);
         }

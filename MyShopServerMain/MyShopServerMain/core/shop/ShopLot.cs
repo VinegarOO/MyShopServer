@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using MyShopServerMain.core.wrappers.DB;
 
 namespace MyShopServerMain.core.shop
 {
@@ -9,7 +10,7 @@ namespace MyShopServerMain.core.shop
         internal string Name { get; private set; }
         internal decimal Price { get; private set; }
         internal string About { get; private set; }
-        internal string Picture { get; private set; }
+        internal Image Picture { get; private set; }
         internal string[] Tags { get; private set; }
 
         private bool ThumbnailCallback()
@@ -30,10 +31,10 @@ namespace MyShopServerMain.core.shop
             Name = tName;
 
             Image temp = Image.FromFile(picturePath);
+            Picture = temp;
             temp = temp.GetThumbnailImage(100, 100
                 , new Image.GetThumbnailImageAbort(ThumbnailCallback), IntPtr.Zero);
-            temp.Save("_" + picturePath);
-            Picture = picturePath;
+            MyDb.AddData(temp, Name);
 
             if (tPrice > 0)
             {
@@ -59,10 +60,10 @@ namespace MyShopServerMain.core.shop
         internal void EditPicture(string picturePath)
         {
             Image temp = Image.FromFile(picturePath);
+            Picture = temp;
             temp = temp.GetThumbnailImage(100,100
                 , new Image.GetThumbnailImageAbort(ThumbnailCallback), IntPtr.Zero);
-            temp.Save("_" + picturePath);
-            Picture = picturePath;
+            MyDb.AddData(temp, picturePath);
         }
 
         internal void EditPrice(decimal tPrice)

@@ -16,7 +16,6 @@ namespace MyShopServerMain.core.wrappers
         internal static readonly Account AdminAccount;
         internal const string AdminPassword = "qwerty";
         internal static readonly Encoding Encoding = new UTF8Encoding();
-        internal static readonly BinaryFormatter Bf = new BinaryFormatter();
 
         static DataForWrappers()
         {

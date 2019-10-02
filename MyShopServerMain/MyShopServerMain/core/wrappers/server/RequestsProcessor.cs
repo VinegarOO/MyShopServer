@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using MyShopServerMain.core.shop;
+using MyShopServerMain.core.wrappers.DB;
 
 namespace MyShopServerMain.core.wrappers.server
 {
@@ -134,13 +136,14 @@ namespace MyShopServerMain.core.wrappers.server
         private static void GetShopLotsList(RequestHolder request) // [1]void
         {
             string list = string.Empty;
-            List<string> images = new List<string>();
+            List<Image> images = new List<Image>();
 
-            foreach (var lot in DataForWrappers.Shop.GetShopLots()) // filling list
+            foreach (ShopLot lot in DataForWrappers.Shop.GetShopLots()) // filling list
             {
                 list += lot.Name;
                 list += Environment.NewLine;
-                images.Add("_" + lot.Picture);
+                Image temp = MyDb.GetData<Image>(lot.Name);
+                images.Add(temp);
             }
             Server.SendAnswer(request.Client, Server.CreateAnswer("Complete",
                 list), images);
@@ -149,15 +152,16 @@ namespace MyShopServerMain.core.wrappers.server
         private static void GetShopLots(RequestHolder request) // [1]-[infinity]tags
         {
             string result = string.Empty;
-            List<string> images = new List<string>();
+            List<Image> images = new List<Image>();
 
             string[] tags = new string[request.Command.Length - 1]; // getting tags
 
-            foreach (var temp in DataForWrappers.Shop.GetShopLots(tags)) // refactor list of results
+            foreach (ShopLot lot in DataForWrappers.Shop.GetShopLots(tags)) // refactor list of results
             {
-                result += temp.Name;
+                result += lot.Name;
                 result += Environment.NewLine;
-                images.Add("_" + temp.Picture);
+                Image temp = MyDb.GetData<Image>(lot.Name);
+                images.Add(temp);
             }
 
             Server.SendAnswer(request.Client, Server.CreateAnswer("Complete",
