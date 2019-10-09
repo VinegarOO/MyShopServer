@@ -62,6 +62,46 @@ namespace MyShopServerMain.core.wrappers.DB
             return result;
         }
 
+        public static bool RemoveData(object data, string name)
+        {
+            Type dataType = data.GetType();
+            string path = dataType + "/" + name + ".shda";
+
+            if (_typesOfData.Contains(dataType))
+            {
+                if (File.Exists(path))
+                {
+                    File.Delete(path);
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+            
+            return true;
+        }
+
+        public static bool UpdateData(object data, string name)
+        {
+            Type dataType = data.GetType();
+
+            if (RemoveData(data, name))
+            {
+                return AddData(data, name);
+            }
+            else
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         public static List<string> GetListOfData(Type typeOfData)
         {
             List<string> result = new List<string>();

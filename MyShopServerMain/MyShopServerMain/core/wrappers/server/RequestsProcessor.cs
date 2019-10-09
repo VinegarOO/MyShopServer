@@ -138,11 +138,11 @@ namespace MyShopServerMain.core.wrappers.server
             string list = string.Empty;
             List<Image> images = new List<Image>();
 
-            foreach (ShopLot lot in DataForWrappers.Shop.GetShopLots()) // filling list
+            foreach (var lot in DataForWrappers.Shop.GetShopLots()) // filling list
             {
                 list += lot.Name;
                 list += Environment.NewLine;
-                Image temp = MyDb.GetData<Image>(lot.Name);
+                Image temp = (lot.Image);
                 images.Add(temp);
             }
             Server.SendAnswer(request.Client, Server.CreateAnswer("Complete",

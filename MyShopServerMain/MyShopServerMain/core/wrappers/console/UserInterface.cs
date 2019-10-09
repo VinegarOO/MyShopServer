@@ -529,8 +529,15 @@ namespace MyShopServerMain.core.wrappers.console
                 {
                     if (TerminalCommand[2] == null) // if no currently goods show all
                     {
-                        List<ShopLot> lots = DataForWrappers.Shop.GetShopLots();
+                        List<ThumbGoods> lots = DataForWrappers.Shop.GetShopLots();
+                        List<ShopLot> result = new List<ShopLot>();
+
                         foreach (var lot in lots)
+                        {
+                            result.Add(DataForWrappers.Shop.GetShopLot(lot.Name));
+                        }
+                        
+                        foreach (var lot in result)
                         {
                             Console.WriteLine(lot + Environment.NewLine);
                         }

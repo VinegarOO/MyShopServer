@@ -47,6 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="core\shop\ThumbGoods.cs" />
     <Compile Include="core\wrappers\DataForWrappers.cs" />
     <Compile Include="core\wrappers\DB\MyDB.cs" />
     <Compile Include="core\wrappers\server\RequestsProcessor.cs" />
