@@ -27,7 +27,7 @@ namespace MyShopServerMain.core.wrappers.server
                 // process request
                 var t = new RequestHolder(client, request);
 
-                ThreadPool.QueueUserWorkItem(ProcessRequest, t);
+                DataForWrappers.Requests.Enqueue(t);
             }
         }
 

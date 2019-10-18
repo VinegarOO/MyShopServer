@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
 using MyShopServerMain.core.shop;
 using MyShopServerMain.core.wrappers.server;
@@ -43,6 +42,21 @@ namespace MyShopServerMain.core.wrappers.console
         private static void Start()
         {
             Server.Start();
+            int threads;
+            try
+            {
+                threads = Convert.ToInt32(TerminalCommand[1]);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return;
+            }
+            for (int i = 0; i < threads; i++)
+            {
+                DataForWrappers.Threads.Add(new Thread(server.RequestsProcessor.ProcessRequest));
+                DataForWrappers.Threads[i].Start();
+            }
             // Initialise all server Threads
         }
 
@@ -575,8 +589,12 @@ namespace MyShopServerMain.core.wrappers.console
 
         private static void Stop()
         {
-            Server.Abort();
+            if(Server.IsAlive) Server.Abort();
             Console.WriteLine("Stopping server");
+            foreach (var thread in DataForWrappers.Threads)
+            {
+                if(thread.IsAlive) thread.Abort();
+            }
         }
 
         private static void Exit()
@@ -629,7 +647,9 @@ namespace MyShopServerMain.core.wrappers.console
                 {
                     case "start":
                     {
-                        Console.WriteLine("will start server");
+                        Console.WriteLine("will start server " +
+                                          "arguments is a number of threads for " +
+                                          "processing requests");
                         break;
                     }
 

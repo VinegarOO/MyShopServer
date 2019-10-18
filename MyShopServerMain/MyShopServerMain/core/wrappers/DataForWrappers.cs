@@ -1,21 +1,26 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using MyShopServerMain.core.shop;
+using MyShopServerMain.core.wrappers.server;
 
 namespace MyShopServerMain.core.wrappers
 {
-    static class DataForWrappers
+    class DataForWrappers
     {
         internal static readonly Shop Shop;
         internal static string[] TerminalCommand;
         internal static readonly Account AdminAccount;
         internal const string AdminPassword = "qwerty";
         internal static readonly Encoding Encoding = new UTF8Encoding();
+        internal static ConcurrentQueue<RequestHolder> Requests = new ConcurrentQueue<RequestHolder>();
+        internal static List<Thread> Threads = new List<Thread>();
 
         static DataForWrappers()
         {

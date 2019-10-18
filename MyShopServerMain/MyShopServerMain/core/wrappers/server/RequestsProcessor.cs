@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Threading;
 using MyShopServerMain.core.shop;
 using MyShopServerMain.core.wrappers.DB;
 
@@ -10,9 +11,19 @@ namespace MyShopServerMain.core.wrappers.server
     {
         private delegate void MyDelegate(RequestHolder request);
 
-        internal static void ProcessRequest(Object tRequest)
+        internal static void ProcessRequest()
         {
-            Dictionary<string, MyDelegate> commands = new Dictionary<string, MyDelegate>
+            while (true)
+            {
+                RequestHolder request;
+
+                while (!DataForWrappers.Requests.TryDequeue(out request))
+                {
+                    Thread.Sleep(10);
+                }
+            
+            
+                Dictionary<string, MyDelegate> commands = new Dictionary<string, MyDelegate>
                 {
                     {"SignIn", SignIn },
                     {"ChangePassword", ChangePassword },
@@ -22,19 +33,19 @@ namespace MyShopServerMain.core.wrappers.server
                     {"Refill", Refill },
                     {"Buy", Buy }
                 };
+            
+                string tCommand = DataForWrappers.Encoding.GetString(request.Request);
 
-            RequestHolder request = tRequest as RequestHolder;
-            string tCommand = DataForWrappers.Encoding.GetString(request.Request);
+                request.Command = tCommand.Split();
 
-            request.Command = tCommand.Split();
-
-            if (commands.ContainsKey(request.Command[0])) // processing command[0]
-            {
-                commands[request.Command[0]](request);
-            }
-            else
-            {
-                Server.SendAnswer(request.Client, Server.CreateAnswer("Error", "Not a command."));
+                if (commands.ContainsKey(request.Command[0])) // processing command[0]
+                {
+                    commands[request.Command[0]](request);
+                }
+                else
+                {
+                    Server.SendAnswer(request.Client, Server.CreateAnswer("Error", "Not a command."));
+                }
             }
         }
 

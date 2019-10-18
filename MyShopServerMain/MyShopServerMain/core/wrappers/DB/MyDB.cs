@@ -2,26 +2,24 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
 
 namespace MyShopServerMain.core.wrappers.DB
 {
     public static class MyDb
     {
-        private static HashSet<Type> _typesOfData = new HashSet<Type>();
         private static readonly BinaryFormatter Bf = new BinaryFormatter();
 
         public static bool AddData(object data, string name)
         {
             Type dataType = data.GetType();
+            string path = $"{dataType.Name}//{name}.shda";
 
             if (dataType.IsSerializable)
             {
-                if (!_typesOfData.Contains(dataType))
+                if (!Directory.Exists(dataType.Name))
                 {
-                    Directory.CreateDirectory(dataType.Name + "/");
-                    _typesOfData.Add(dataType);
+                    Directory.CreateDirectory(dataType.Name + "//");
                 }
 
                 if (GetListOfData(dataType).Contains(name))
@@ -29,10 +27,9 @@ namespace MyShopServerMain.core.wrappers.DB
                     return false;
                 }
 
-                using (FileStream fs = new FileStream(dataType.Name + "/" + name + ".shda", FileMode.Create))
-                {
-                    Bf.Serialize(fs, data);
-                }
+                FileStream fs = new FileStream(path, FileMode.CreateNew);
+                Bf.Serialize(fs, data);
+                fs.Dispose();
 
                 return true;
             }
@@ -43,31 +40,30 @@ namespace MyShopServerMain.core.wrappers.DB
         {
             Type dataType = typeof(T);
             T result = null;
-            string path = dataType + "/" + name + ".shda";
+            string path = $"{dataType.Name}//{name}.shda";
 
-            if (dataType.IsSerializable && _typesOfData.Contains(dataType))
+            if (dataType.IsSerializable && Directory.Exists(dataType.Name))
             {
                 if (!File.Exists(path))
                 {
-                    return result;
+                    return null;
                 }
 
-                using (FileStream fs = new FileStream(path, FileMode.Open))
-                {
-                    result = (T)Bf.Deserialize(fs);
-                }
+                FileStream fs = new FileStream(path, FileMode.Open);
+                result = (T)Bf.Deserialize(fs);
+                fs.Dispose();
 
                 return result;
             }
-            return result;
+            return null;
         }
 
         public static bool RemoveData(object data, string name)
         {
             Type dataType = data.GetType();
-            string path = dataType + "/" + name + ".shda";
+            string path = $"{dataType.Name}//{name}.shda";
 
-            if (_typesOfData.Contains(dataType))
+            if (Directory.Exists(dataType.Name))
             {
                 if (File.Exists(path))
                 {
@@ -98,16 +94,14 @@ namespace MyShopServerMain.core.wrappers.DB
             {
                 return false;
             }
-
-            return true;
         }
 
         public static List<string> GetListOfData(Type typeOfData)
         {
             List<string> result = new List<string>();
-            string path = typeOfData + "/";
+            string path = $"{typeOfData.Name}//";
             
-            if (_typesOfData.Contains(typeOfData))
+            if (Directory.Exists(typeOfData.Name))
             {
                 result = Directory.GetFiles(path).ToList();
 
