@@ -20,6 +20,7 @@ namespace MyShopServerMain.core.wrappers
         internal const string AdminPassword = "qwerty";
         internal static readonly Encoding Encoding = new UTF8Encoding();
         internal static ConcurrentQueue<RequestHolder> Requests = new ConcurrentQueue<RequestHolder>();
+        internal static ConcurrentQueue<AnswerHolder> Answers = new ConcurrentQueue<AnswerHolder>();
         internal static List<Thread> Threads = new List<Thread>();
 
         static DataForWrappers()

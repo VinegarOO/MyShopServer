@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Threading;
 
 namespace MyShopServerMain.core.wrappers.DB
 {
     public static class MyDb
     {
         private static readonly BinaryFormatter Bf = new BinaryFormatter();
+        private static Object locker;
 
         public static bool AddData(object data, string name)
         {
@@ -17,19 +19,22 @@ namespace MyShopServerMain.core.wrappers.DB
 
             if (dataType.IsSerializable)
             {
-                if (!Directory.Exists(dataType.Name))
-                {
-                    Directory.CreateDirectory(dataType.Name + "//");
-                }
-
                 if (GetListOfData(dataType).Contains(name))
                 {
                     return false;
                 }
 
-                FileStream fs = new FileStream(path, FileMode.CreateNew);
-                Bf.Serialize(fs, data);
-                fs.Dispose();
+                lock (locker)
+                {
+                    if (!Directory.Exists(dataType.Name))
+                    {
+                        Directory.CreateDirectory(dataType.Name + "//");
+                    }
+                
+                    FileStream fs = new FileStream(path, FileMode.CreateNew);
+                    Bf.Serialize(fs, data);
+                    fs.Dispose();
+                }
 
                 return true;
             }
@@ -49,9 +54,12 @@ namespace MyShopServerMain.core.wrappers.DB
                     return null;
                 }
 
-                FileStream fs = new FileStream(path, FileMode.Open);
-                result = (T)Bf.Deserialize(fs);
-                fs.Dispose();
+                lock (locker)
+                {
+                    FileStream fs = new FileStream(path, FileMode.Open);
+                    result = (T)Bf.Deserialize(fs);
+                    fs.Dispose();
+                }
 
                 return result;
             }
@@ -67,7 +75,10 @@ namespace MyShopServerMain.core.wrappers.DB
             {
                 if (File.Exists(path))
                 {
-                    File.Delete(path);
+                    lock (locker)
+                    {
+                        File.Delete(path);
+                    }
                 }
                 else
                 {
@@ -86,13 +97,16 @@ namespace MyShopServerMain.core.wrappers.DB
         {
             Type dataType = data.GetType();
 
-            if (RemoveData(data, name))
+            lock (locker)
             {
-                return AddData(data, name);
-            }
-            else
-            {
-                return false;
+                if (RemoveData(data, name))
+                {
+                    return AddData(data, name);
+                }
+                else
+                {
+                    return false;
+                }
             }
         }
 
@@ -107,14 +121,17 @@ namespace MyShopServerMain.core.wrappers.DB
 
                 foreach (var name in result)
                 {
-                    if (name.EndsWith(".shda"))
+                    lock (locker)
                     {
-                        int dot = name.LastIndexOf('.');
-                        name.Remove(dot);
-                    }
-                    else
-                    {
-                        result.Remove(name);
+                        if (name.EndsWith(".shda"))
+                        {
+                            int dot = name.LastIndexOf('.');
+                            name.Remove(dot);
+                        }
+                        else
+                        {
+                            result.Remove(name);
+                        }
                     }
                 }
 

@@ -4,6 +4,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Sockets;
 using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Threading;
@@ -17,6 +18,8 @@ namespace MyShopServerMain.core.wrappers.server
     {
         internal static void WaitingConnection()
         {
+            Socket rSocket;
+            
             while (true)
             {
                 // Get connection
@@ -31,9 +34,26 @@ namespace MyShopServerMain.core.wrappers.server
             }
         }
 
+        internal static void SendingAnswer()
+        {
+            Socket aSocket;
+            
+            while (true)
+            {
+                AnswerHolder answer;
+                
+                while (!DataForWrappers.Answers.TryDequeue(out answer))
+                {
+                    Thread.Sleep(10);
+                }
+                
+                
+            }
+        }
+
         private static void Send(IPAddress client, byte[] message)
         {
-            // sending answer
+            DataForWrappers.Answers.Enqueue(new AnswerHolder(client, message));
         }
 
         internal static void SendAnswer(IPAddress client, string message)
