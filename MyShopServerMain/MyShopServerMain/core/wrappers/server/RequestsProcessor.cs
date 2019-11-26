@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Net;
 using System.Threading;
 using MyShopServerMain.core.shop;
 using MyShopServerMain.core.wrappers.DB;
@@ -21,7 +22,9 @@ namespace MyShopServerMain.core.wrappers.server
                 {
                     Thread.Sleep(10);
                 }
-            
+                
+                request = new RequestHolder(new IPEndPoint(((IPEndPoint)request.Client).Address,
+                    ((IPEndPoint)request.Client).Port + 1), request.Request);
             
                 Dictionary<string, MyDelegate> commands = new Dictionary<string, MyDelegate>
                 {

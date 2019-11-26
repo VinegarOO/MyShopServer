@@ -24,8 +24,7 @@ namespace MyShopServerMain.core.wrappers.server
                 rSocket.ReceiveFrom(request, ref endPoint);
 
                 // process request
-                var t = new RequestHolder(new IPEndPoint(((IPEndPoint)endPoint).Address,
-                    ((IPEndPoint)endPoint).Port + 1), request);
+                var t = new RequestHolder(endPoint, request);
 
                 DataForWrappers.Requests.Enqueue(t);
             }
