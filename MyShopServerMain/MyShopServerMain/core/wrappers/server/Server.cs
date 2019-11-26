@@ -1,16 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Runtime.Remoting.Messaging;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using MyShopServerMain.core.shop;
-using static MyShopServerMain.core.wrappers.server.RequestsProcessor;
 
 namespace MyShopServerMain.core.wrappers.server
 {
@@ -18,17 +12,19 @@ namespace MyShopServerMain.core.wrappers.server
     {
         internal static void WaitingConnection()
         {
-            Socket rSocket;
-            
+            Socket rSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+            EndPoint endPoint = new IPEndPoint(IPAddress.Parse(DataForWrappers.ServerIPAddres)
+                , DataForWrappers.ServerPort);
+            rSocket.Bind(endPoint);
+
             while (true)
             {
-                // Get connection
-
-                IPAddress client = null;
-                byte[] request = null;
+                // getting request
+                byte[] request = new byte[1024];
+                rSocket.ReceiveFrom(request, ref endPoint);
 
                 // process request
-                var t = new RequestHolder(client, request);
+                var t = new RequestHolder(endPoint, request);
 
                 DataForWrappers.Requests.Enqueue(t);
             }
@@ -36,8 +32,8 @@ namespace MyShopServerMain.core.wrappers.server
 
         internal static void SendingAnswer()
         {
-            Socket aSocket;
-            
+            Socket aSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+
             while (true)
             {
                 AnswerHolder answer;
@@ -47,23 +43,24 @@ namespace MyShopServerMain.core.wrappers.server
                     Thread.Sleep(10);
                 }
                 
-                
+                // Sending answer
+                aSocket.SendTo(answer.Answer, answer.Client);
             }
         }
 
-        private static void Send(IPAddress client, byte[] message)
+        private static void Send(EndPoint client, byte[] message)
         {
             DataForWrappers.Answers.Enqueue(new AnswerHolder(client, message));
         }
 
-        internal static void SendAnswer(IPAddress client, string message)
+        internal static void SendAnswer(EndPoint client, string message)
         {
             byte[] messageBytes = DataForWrappers.Encoding.GetBytes(message);
 
             Send(client, messageBytes);
         }
 
-        internal static void SendAnswer(IPAddress client, string message, Image image)
+        internal static void SendAnswer(EndPoint client, string message, Image image)
         {
             byte[] messageBytes = DataForWrappers.Encoding.GetBytes(message);
 
@@ -72,7 +69,7 @@ namespace MyShopServerMain.core.wrappers.server
             Send(client, messageBytes);
         }
 
-        internal static void SendAnswer(IPAddress client, string message, List<Image> images)
+        internal static void SendAnswer(EndPoint client, string message, List<Image> images)
         {
             byte[] messageBytes = DataForWrappers.Encoding.GetBytes(message);
 

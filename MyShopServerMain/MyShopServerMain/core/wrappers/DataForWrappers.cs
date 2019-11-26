@@ -2,11 +2,9 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using MyShopServerMain.core.shop;
 using MyShopServerMain.core.wrappers.server;
 
@@ -22,6 +20,8 @@ namespace MyShopServerMain.core.wrappers
         internal static ConcurrentQueue<RequestHolder> Requests = new ConcurrentQueue<RequestHolder>();
         internal static ConcurrentQueue<AnswerHolder> Answers = new ConcurrentQueue<AnswerHolder>();
         internal static List<Thread> Threads = new List<Thread>();
+        internal const string ServerIPAddres = "127.0.0.1";
+        internal const int ServerPort = 1102;
 
         static DataForWrappers()
         {

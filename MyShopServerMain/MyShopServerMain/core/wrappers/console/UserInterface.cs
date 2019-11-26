@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using MyShopServerMain.core.shop;
-using MyShopServerMain.core.wrappers.server;
 using static MyShopServerMain.core.wrappers.DataForWrappers;
 
 namespace MyShopServerMain.core.wrappers.console
@@ -11,6 +10,7 @@ namespace MyShopServerMain.core.wrappers.console
     public static class UserInterface
     {
         private static readonly Thread Server = new Thread(server.Server.WaitingConnection);
+        private static readonly Thread Sender = new Thread(server.Server.SendingAnswer);
         private static readonly Dictionary<string, Action> Commands = new Dictionary<string, Action>
         {
             {"start", Start },
@@ -42,6 +42,7 @@ namespace MyShopServerMain.core.wrappers.console
         private static void Start()
         {
             Server.Start();
+            Sender.Start();
             int threads;
             try
             {
@@ -590,6 +591,7 @@ namespace MyShopServerMain.core.wrappers.console
         private static void Stop()
         {
             if(Server.IsAlive) Server.Abort();
+            if(Sender.IsAlive) Sender.Abort();
             Console.WriteLine("Stopping server");
             foreach (var thread in DataForWrappers.Threads)
             {
