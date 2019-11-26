@@ -89,6 +89,7 @@ namespace MyShopServerMain.core.shop
             foreach (var tag in Tags)
             {
                 result += tag;
+                result += " ";
             }
 
             return result;
