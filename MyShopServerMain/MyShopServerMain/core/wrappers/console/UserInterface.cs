@@ -41,7 +41,9 @@ namespace MyShopServerMain.core.wrappers.console
 
         private static void Start()
         {
+            Server.Priority = ThreadPriority.Highest;
             Server.Start();
+            Sender.Priority = ThreadPriority.Highest;
             Sender.Start();
             int threads;
             try

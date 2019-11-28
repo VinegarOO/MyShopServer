@@ -26,7 +26,7 @@ namespace MyShopServerMain.core.wrappers
         static DataForWrappers()
         {
             AdminAccount = new Account("Admin", AdminPassword, AccessRights.Admin);
-            while (true)
+            /*while (true)
             {
                 Console.WriteLine("enter password");
                 Console.Write(">> ");
@@ -39,7 +39,7 @@ namespace MyShopServerMain.core.wrappers
                 {
                     Console.WriteLine("wrong password");
                 }
-            }
+            }*/
 
 
 
