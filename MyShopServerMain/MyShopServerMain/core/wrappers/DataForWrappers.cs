@@ -21,7 +21,8 @@ namespace MyShopServerMain.core.wrappers
         internal static ConcurrentQueue<AnswerHolder> Answers = new ConcurrentQueue<AnswerHolder>();
         internal static List<Thread> Threads = new List<Thread>();
         internal const string ServerIPAddres = "127.0.0.1";
-        internal const int ServerPort = 1102;
+        internal const int SenderPort = 703;
+        internal const int ServerPort = 708;
 
         static DataForWrappers()
         {
