@@ -24,7 +24,7 @@ namespace MyShopServerMain.core.wrappers.server
                 }
                 
                 request = new RequestHolder(new IPEndPoint(((IPEndPoint)request.Client).Address,
-                    ((IPEndPoint)request.Client).Port + 1), request.Request);
+                    SenderPort, request.Request);
             
                 Dictionary<string, MyDelegate> commands = new Dictionary<string, MyDelegate>
                 {
