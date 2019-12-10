@@ -3,15 +3,17 @@ using MyShopServerMain.core.wrappers.DB;
 
 namespace MyShopServerMain.core.shop
 {
-    public class ThumbGoods
+    public class ThumbGoods : ShopLib.ThumbGoods
     {
-        public readonly Image Image;
-        public readonly string Name;
-
-        public ThumbGoods(string name)
+        public ThumbGoods(string name, byte[] picture)
         {
-            Image = MyDb.GetData<Image>(name);
             Name = name;
+            Picture = picture;
+        }
+
+        public override string ToString()
+        {
+            return Name;
         }
     }
 }

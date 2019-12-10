@@ -1,24 +1,19 @@
 ﻿using System;
 using System.Drawing;
+using System.IO;
 using MyShopServerMain.core.wrappers.DB;
 
 namespace MyShopServerMain.core.shop
 {
     [Serializable]
-    internal class ShopLot
+    public class ShopLot : ShopLib.ShopLot
     {
-        internal string Name { get; private set; }
-        internal decimal Price { get; private set; }
-        internal string About { get; private set; }
-        internal Image Picture { get; private set; }
-        internal string[] Tags { get; private set; }
-
         private bool ThumbnailCallback()
         {
             return false;
         }
 
-        internal ShopLot(string tName, string picturePath, string tAbout, decimal tPrice, string[] tags)
+        internal ShopLot(string tName, string picturePath, string tAbout, long tPrice)
         {
             if (tName == null)
             {
@@ -30,8 +25,12 @@ namespace MyShopServerMain.core.shop
             }
             Name = tName;
 
+            using (FileStream fs = new FileStream(picturePath, FileMode.Open))
+            {
+                Picture = new byte[fs.Length];
+                fs.Read(Picture, 0, (int)fs.Length);
+            }
             Image temp = Image.FromFile(picturePath);
-            Picture = temp;
             temp = temp.GetThumbnailImage(100, 100
                 , new Image.GetThumbnailImageAbort(ThumbnailCallback), IntPtr.Zero);
             MyDb.AddData(temp, Name);
@@ -46,27 +45,9 @@ namespace MyShopServerMain.core.shop
             }
 
             About = tAbout;
-
-            if (tags == null)
-            {
-                Tags = new string[0];
-            }
-            else
-            {
-                Tags = tags;
-            }
         }
 
-        internal void EditPicture(string picturePath)
-        {
-            Image temp = Image.FromFile(picturePath);
-            Picture = temp;
-            temp = temp.GetThumbnailImage(100,100
-                , new Image.GetThumbnailImageAbort(ThumbnailCallback), IntPtr.Zero);
-            MyDb.AddData(temp, picturePath);
-        }
-
-        internal void EditPrice(decimal tPrice)
+        internal void EditPrice(long tPrice)
         {
             if (tPrice > 0)
             {
@@ -83,24 +64,11 @@ namespace MyShopServerMain.core.shop
             About = tAbout;
         }
 
-        internal string GetTags()
-        {
-            string result = String.Empty;
-            foreach (var tag in Tags)
-            {
-                result += tag;
-                result += " ";
-            }
-
-            return result;
-        }
-
         public override string ToString()
         {
             string result = String.Empty;
             result += $"Name: {Name}\n";
             result += $"Price: {Price}\n";
-            result += $"Tags: {this.GetTags()}\n";
             result += $"Description: {About}";
             return result;
         }

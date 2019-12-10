@@ -150,13 +150,13 @@ namespace MyShopServerMain.core.wrappers.console
                     Console.WriteLine("print goods description"); // getting description
                     string about = Console.ReadLine();
 
-                    decimal price; // getting price
+                    long price; // getting price
                     while (true)
                     {
                         try
                         {
                             Console.WriteLine("print price");
-                            price = Convert.ToDecimal(Console.ReadLine());
+                            price = Convert.ToInt64(Console.ReadLine());
                             break;
                         }
                         catch
@@ -184,7 +184,7 @@ namespace MyShopServerMain.core.wrappers.console
                         }
                     }
 
-                    ShopLot shopLot = new ShopLot(TerminalCommand[2], picturePath, about, price, tags);
+                    ShopLot shopLot = new ShopLot(TerminalCommand[2], picturePath, about, price);
 
                     try // adding shop lot
                     {
@@ -327,13 +327,13 @@ namespace MyShopServerMain.core.wrappers.console
 
                         case "Money":
                         {
-                            decimal sum; // getting sum, converting to decimal
+                            long sum; // getting sum, converting to decimal
                             while (true)
                             {
                                 try
                                 {
                                     Console.WriteLine("print sum");
-                                    sum = Convert.ToDecimal(Console.ReadLine());
+                                    sum = Convert.ToInt64(Console.ReadLine());
                                     break;
                                 }
                                 catch
@@ -418,33 +418,16 @@ namespace MyShopServerMain.core.wrappers.console
                                       "Description - About");
                     switch (Console.ReadLine())
                     {
-                        case "Picture":
-                        {
-                            string picturePath; // getting new picture
-                            Console.WriteLine("Chose new picture");
-                            picturePath = Console.ReadLine();
-                            try
-                            {
-                                shopLot.EditPicture(picturePath);
-                            }
-                            catch (Exception e)
-                            {
-                                Console.WriteLine(e.Message);
-                                return;
-                            }
-                            break;
-                        }
-
                         case "Price":
                         {
-                            decimal price; // getting price and convert to decimal
+                            long price; // getting price and convert to decimal
                             Console.WriteLine("Print new price");
                             while (true)
                             {
                                 try
                                 {
                                     Console.WriteLine("print sum");
-                                    price = Convert.ToDecimal(Console.ReadLine());
+                                    price = Convert.ToInt64(Console.ReadLine());
                                     break;
                                 }
                                 catch

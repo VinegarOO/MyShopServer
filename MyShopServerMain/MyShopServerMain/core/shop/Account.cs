@@ -5,21 +5,14 @@ using System.Runtime.Serialization.Formatters.Binary;
 namespace MyShopServerMain.core.shop
 {
     [Serializable]
-    internal class Account
+    internal class Account : ShopLib.Account
     {
-        internal AccessRights AccessRight { get; set; }
-
-        private string _password;
-        private decimal _money;
-
-        internal string Name { get; private set; }
-
         internal Account(string name, string newPassword, AccessRights newAccessRight = AccessRights.User)
         {
             _password = newPassword;
             Name = name;
             _money = 0;
-            AccessRight = newAccessRight;
+            AccessRight = (int)newAccessRight;
         }
 
         internal bool Verify(string tPassword)
@@ -41,7 +34,7 @@ namespace MyShopServerMain.core.shop
 
         internal void ChangePassword(string newPassword, Account adminAccount, string aPassword)
         {
-            if (adminAccount.AccessRight == AccessRights.Admin)
+            if (adminAccount.AccessRight == (int)AccessRights.Admin)
             {
                 if (adminAccount.Verify(aPassword))
                 {
@@ -58,7 +51,7 @@ namespace MyShopServerMain.core.shop
             }
         }
 
-        internal void Withdraw(decimal sum, string tPassword)
+        internal void Withdraw(long sum, string tPassword)
         {
             if (tPassword == _password)
             {
@@ -81,9 +74,9 @@ namespace MyShopServerMain.core.shop
             }
         }
 
-        internal void Withdraw(decimal sum, Account account, string aPassword)
+        internal void Withdraw(long sum, Account account, string aPassword)
         {
-            if (account.AccessRight == AccessRights.Admin)
+            if (account.AccessRight == (int)AccessRights.Admin)
             {
                 if (sum < 0)
                 {
@@ -111,9 +104,9 @@ namespace MyShopServerMain.core.shop
             }
         }
 
-        internal void Refill(decimal sum, Account aAccount, string aPassword)
+        internal void Refill(long sum, Account aAccount, string aPassword)
         {
-            if (aAccount.AccessRight == AccessRights.Admin)
+            if (aAccount.AccessRight == (int)AccessRights.Admin)
             {
                 if (sum < 0)
                 {
@@ -136,7 +129,7 @@ namespace MyShopServerMain.core.shop
 
         internal void ChangeAccessRights(AccessRights newRights, Account account, string aPassword)
         {
-            if (account.AccessRight == AccessRights.Admin)
+            if (account.AccessRight == (int)AccessRights.Admin)
             {
                 if (account.Verify(aPassword))
                 {
@@ -144,7 +137,7 @@ namespace MyShopServerMain.core.shop
                     {
                         throw new FormatException("Account cant be the shop");
                     }
-                    AccessRight = newRights;
+                    AccessRight = (int)newRights;
                 }
                 else
                 {
@@ -162,7 +155,7 @@ namespace MyShopServerMain.core.shop
             string result = String.Empty;
             result += $"Name: {Name}" + Environment.NewLine;
             result += $"State of account: {_money}" + Environment.NewLine;
-            result += $"AccessRights: {AccessRight}";
+            result += $"AccessRights: {(AccessRights)AccessRight}";
             return result;
         }
     }

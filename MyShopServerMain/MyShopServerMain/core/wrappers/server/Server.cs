@@ -44,78 +44,15 @@ namespace MyShopServerMain.core.wrappers.server
                 }
                 
                 // Sending answer
+                aSocket.SendTo(BitConverter.GetBytes(answer.Answer.Length), answer.Client);
+                Thread.Sleep(10);
                 aSocket.SendTo(answer.Answer, answer.Client);
             }
         }
 
-        private static void Send(EndPoint client, byte[] message)
+        public static void Send(EndPoint client, byte[] message)
         {
             DataForWrappers.Answers.Enqueue(new AnswerHolder(client, message));
-        }
-
-        internal static void SendAnswer(EndPoint client, string message)
-        {
-            byte[] messageBytes = DataForWrappers.Encoding.GetBytes(message);
-
-            Send(client, messageBytes);
-        }
-
-        internal static void SendAnswer(EndPoint client, string message, Image image)
-        {
-            byte[] messageBytes = DataForWrappers.Encoding.GetBytes(message);
-
-            messageBytes = messageBytes.Concat(CompareImage(image)).ToArray();
-
-            Send(client, messageBytes);
-        }
-
-        internal static void SendAnswer(EndPoint client, string message, List<Image> images)
-        {
-            byte[] messageBytes = DataForWrappers.Encoding.GetBytes(message);
-
-            IEnumerable<byte> bImages = new byte[0];
-
-            foreach (var image in images)
-            {
-                bImages = bImages.Concat(CompareImage(image));
-            }
-
-            messageBytes = messageBytes.Concat(bImages).ToArray();
-
-            Send(client, messageBytes);
-        }
-
-        internal static IEnumerable<byte> CompareImage(Image image)
-        {
-            byte[] imgStart = DataForWrappers.Encoding.GetBytes("<image>");
-            byte[] imgEnd = DataForWrappers.Encoding.GetBytes("</image>");
-            byte[] img;
-            if (image == null)
-            {
-                img = new byte[1];
-            }
-            else
-            {
-                ImageConverter ic = new ImageConverter();
-                img = (byte[])ic.ConvertTo(image, typeof(byte[]));
-            }
-
-            return imgStart.Concat(img).Concat(imgEnd);
-        }
-
-        internal static string CreateAnswer(string theme, string text)
-        {
-            string result = string.Empty;
-            result += $"<head><title>{DataForWrappers.Shop.Name}</title></head>";
-            result += Environment.NewLine;
-            string[] texts = text.Split(Environment.NewLine.ToCharArray());
-            result += $"<body><h1>{theme}</h1>";
-            foreach (var temp in texts)
-            {
-                result += $"<h2>{temp}</h2>";
-            }
-            result += "</body";
-            return result;
         }
     }
 }

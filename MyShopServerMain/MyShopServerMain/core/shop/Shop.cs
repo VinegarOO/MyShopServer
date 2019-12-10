@@ -66,13 +66,14 @@ namespace MyShopServerMain.core.shop
 
             foreach (var data in listOfData)
             {
-                result.Add(new ThumbGoods(data));
+                var t = MyDb.GetData<ShopLot>(data);
+                result.Add(new ThumbGoods(t.Name, t.Picture));
             }
             
             return result;
         }
 
-        public List<ShopLot> GetShopLots(string[] tags)
+        /*public List<ShopLot> GetShopLots(string[] tags)
         {
             List<ShopLot> result = new List<ShopLot>();
             foreach (var temp in MyDb.GetListOfData(typeof(ShopLot))) // checking all lots
@@ -88,7 +89,7 @@ namespace MyShopServerMain.core.shop
                 }
             }
             return result;
-        }
+        }*/
 
         public void SaveShop(Stream stream)
         {
