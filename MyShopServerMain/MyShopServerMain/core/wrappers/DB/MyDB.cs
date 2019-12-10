@@ -9,7 +9,7 @@ namespace MyShopServerMain.core.wrappers.DB
     public static class MyDb
     {
         private static readonly BinaryFormatter Bf = new BinaryFormatter();
-        private static Object locker;
+        private static Object locker = new object();
 
         public static bool AddData(object data, string name)
         {
@@ -137,7 +137,7 @@ namespace MyShopServerMain.core.wrappers.DB
                 return result;
             }
 
-            return null;
+            return result;
         }
     }
 }

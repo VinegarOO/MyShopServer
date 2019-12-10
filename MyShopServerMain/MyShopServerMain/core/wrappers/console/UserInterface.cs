@@ -41,18 +41,31 @@ namespace MyShopServerMain.core.wrappers.console
 
         private static void Start()
         {
-            Server.Priority = ThreadPriority.Highest;
-            Server.Start();
+            if (!Server.IsAlive) Server.Start();
+            if (!Sender.IsAlive) Sender.Start();
             Sender.Priority = ThreadPriority.Highest;
-            Sender.Start();
+            Server.Priority = ThreadPriority.Highest;
             int threads;
-            try
+            if (TerminalCommand.Length == 1)
             {
-                threads = Convert.ToInt32(TerminalCommand[1]);
+                threads = 1;
             }
-            catch (Exception e)
+            else
             {
-                Console.WriteLine(e.Message);
+                try
+                {
+                    threads = Convert.ToInt32(TerminalCommand[1]);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                    return;
+                }
+            }
+
+            if (threads <= 0)
+            {
+                Console.WriteLine("Can not create less than 1 processor");
                 return;
             }
             for (int i = 0; i < threads; i++)
