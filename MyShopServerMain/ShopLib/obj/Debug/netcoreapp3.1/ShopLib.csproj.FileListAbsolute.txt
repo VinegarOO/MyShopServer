@@ -1,0 +1,8 @@
+F:\Max\my code\MyShopServer\MyShopServerMain\ShopLib\bin\Debug\netcoreapp3.1\ShopLib.deps.json
+F:\Max\my code\MyShopServer\MyShopServerMain\ShopLib\bin\Debug\netcoreapp3.1\ShopLib.dll
+F:\Max\my code\MyShopServer\MyShopServerMain\ShopLib\bin\Debug\netcoreapp3.1\ShopLib.pdb
+F:\Max\my code\MyShopServer\MyShopServerMain\ShopLib\obj\Debug\netcoreapp3.1\ShopLib.csprojAssemblyReference.cache
+F:\Max\my code\MyShopServer\MyShopServerMain\ShopLib\obj\Debug\netcoreapp3.1\ShopLib.AssemblyInfoInputs.cache
+F:\Max\my code\MyShopServer\MyShopServerMain\ShopLib\obj\Debug\netcoreapp3.1\ShopLib.AssemblyInfo.cs
+F:\Max\my code\MyShopServer\MyShopServerMain\ShopLib\obj\Debug\netcoreapp3.1\ShopLib.dll
+F:\Max\my code\MyShopServer\MyShopServerMain\ShopLib\obj\Debug\netcoreapp3.1\ShopLib.pdb
