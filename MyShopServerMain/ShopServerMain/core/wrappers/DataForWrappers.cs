@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading;
 using ShopServerMain.core.shop;
@@ -44,63 +42,8 @@ namespace ShopServerMain.core.wrappers
 
 
 
-            DataForWrappers.Shop = null; // load or create shop
+            DataForWrappers.Shop = new Shop("shopName"); // load or create shop
 
-            bool flag = true;
-            while (flag)
-            {
-                Console.WriteLine("Do you want to load shop (yes/no)");
-                switch (Console.ReadLine())
-                {
-                    case "yes":
-                        {
-                            Console.WriteLine("Print path to the shop");
-                            try
-                            {
-                                BinaryFormatter bf = new BinaryFormatter();
-                                using (FileStream fs = new FileStream($"{Console.ReadLine()}.shop", FileMode.Open))
-                                {
-                                    DataForWrappers.Shop = (Shop)bf.Deserialize(fs);
-                                }
-
-                                flag = false;
-                            }
-                            catch (Exception e)
-                            {
-                                Console.WriteLine(e.Message);
-                            }
-
-                            break;
-                        }
-
-                    case "no":
-                        {
-                            Console.WriteLine("Print name of new shop");
-                            while (true)
-                            {
-                                try
-                                {
-                                    DataForWrappers.Shop = new Shop(Console.ReadLine());
-
-                                    flag = false;
-                                    break;
-                                }
-                                catch (Exception e)
-                                {
-                                    Console.WriteLine(e.Message);
-                                }
-                            }
-
-                            break;
-                        }
-
-                    default:
-                        {
-                            Console.WriteLine("You must choose");
-                            break;
-                        }
-                }
-            }
         }
     }
 }

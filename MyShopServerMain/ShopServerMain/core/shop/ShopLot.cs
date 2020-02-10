@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 
 namespace ShopServerMain.core.shop
@@ -6,7 +8,7 @@ namespace ShopServerMain.core.shop
     [Serializable]
     public class ShopLot : ShopLib.ShopLot
     {
-        private bool ThumbnailCallback()
+        public bool ThumbnailCallback()
         {
             return false;
         }
@@ -23,12 +25,18 @@ namespace ShopServerMain.core.shop
             }
             Name = tName;
 
-            using (FileStream fs = new FileStream(picturePath, FileMode.Open))
+            if (picturePath == "null")
             {
-                Picture = new byte[fs.Length];
-                fs.Read(Picture, 0, (int)fs.Length);
+                Picture = new byte[]{1};
             }
-
+            else
+            {
+                using (FileStream fs = new FileStream(picturePath, FileMode.Open))
+                {
+                    Picture = new byte[fs.Length];
+                    fs.Read(Picture, 0, (int)fs.Length);
+                }
+            }
 
             if (tPrice > 0)
             {
@@ -57,6 +65,29 @@ namespace ShopServerMain.core.shop
         internal void EditAbout(string tAbout)
         {
             About = tAbout;
+        }
+
+        internal ThumbGoods getThumbGoods()
+        {
+            Image image;
+            using (MemoryStream ms = new MemoryStream(Picture))
+            {
+                image = new Bitmap(ms);
+            }
+
+            Image thumb = image.GetThumbnailImage(128, 128,
+                ThumbnailCallback, IntPtr.Zero);
+            byte[] thumbBytes;
+
+            using (MemoryStream ms = new MemoryStream())
+            {
+                thumb.Save(ms, ImageFormat.Png);
+                int length = (int)ms.Length;
+                thumbBytes = new byte[length];
+                ms.Read(thumbBytes, 0, length);
+            }
+
+            return new ThumbGoods(Name, thumbBytes);
         }
 
         public override string ToString()

@@ -51,7 +51,7 @@ namespace ShopServerMain.core.shop
 
         public void RemoveShopLot(ShopLot lot)
         {
-            if(!MyDb.RemoveData(lot, lot.Name))
+            if(!MyDb.RemoveData(lot.Name, "ShopLot"))
             {
                 throw new ArgumentException("Goods is not exists");
             }
@@ -65,40 +65,19 @@ namespace ShopServerMain.core.shop
 
             foreach (var data in listOfData)
             {
-                var t = MyDb.GetData<ShopLot>(data);
-                result.Add(new ThumbGoods(t.Name, t.Picture));
+                var t = GetShopLot(data);
+                result.Add(t.getThumbGoods());
             }
             
             return result;
         }
 
-        /*public List<ShopLot> GetShopLots(string[] tags)
-        {
-            List<ShopLot> result = new List<ShopLot>();
-            foreach (var temp in MyDb.GetListOfData(typeof(ShopLot))) // checking all lots
-            {
-                ShopLot tLot = GetShopLot(temp);
-                foreach (var tag in tags) // checking all tags
-                {
-                    if (tLot.Tags.Contains(tag)) // checking for contains tag
-                    {
-                        result.Add(tLot);
-                        break;
-                    }
-                }
-            }
-            return result;
-        }*/
-
-        public void SaveShop(Stream stream)
-        {
-            BinaryFormatter bf = new BinaryFormatter();
-            bf.Serialize(stream, this);
-        }
-
         public ShopLot GetShopLot(string name)
         {
-            return MyDb.GetData<ShopLot>(name);
+            var buffer = MyDb.GetData(name, "ShopLot");
+            ShopLot result = new ShopLot("null", "null", "null", 1);
+            result.Load(buffer);
+            return result;
         }
 
         public override string ToString()
@@ -138,7 +117,7 @@ namespace ShopServerMain.core.shop
 
         public void RemoveAccount(Account account)
         {
-            if(!MyDb.RemoveData(account, account.Name))
+            if(!MyDb.RemoveData(account.Name, "Account"))
             {
                 throw new ArgumentException("Account is not exists", "account");
             }
@@ -149,27 +128,11 @@ namespace ShopServerMain.core.shop
             return MyDb.GetListOfData(typeof(Account));
         }
 
-        /*public List<string> GetAccounts(AccessRights accessRights) // finding account by access rights
-        {
-            List<string> result = new List<string>();
-            foreach (var tAcc in _accounts) // search in all accounts
-            {
-                if (File.Exists($"{tAcc}.acc")) // if account exists
-                {
-                    Account tempAccount = GetAccount($"{tAcc}.acc");
-                    if (tempAccount.AccessRight == accessRights) // if access rights is correct
-                    {
-                        result.Add(tAcc);
-                    }
-                }
-            }
-            return result;
-        }*/
-
         public Account GetAccount(string name)
         {
-            Account result = MyDb.GetData<Account>(name);
-            
+            var buffer = MyDb.GetData(name, "Account");
+            Account result = new Account("null", "null");
+            result.Load(buffer);
             return result;
         }
     }

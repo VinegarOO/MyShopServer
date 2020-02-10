@@ -607,11 +607,6 @@ namespace ShopServerMain.core.wrappers.console
                     case "yes":
                     {
                         Stop();
-                        // saving shop
-                        using (FileStream fs = new FileStream($"{DataForWrappers.Shop.Name}.shop", FileMode.Create))
-                        {
-                            DataForWrappers.Shop.SaveShop(fs);
-                        }
 
                         Environment.Exit(0);
                         break;

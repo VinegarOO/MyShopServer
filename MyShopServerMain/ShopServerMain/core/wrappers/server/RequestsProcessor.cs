@@ -138,30 +138,10 @@ namespace ShopServerMain.core.wrappers.server
 
             foreach (var lot in DataForWrappers.Shop.GetShopLots()) // filling list
             { 
-                var t = new ThumbGoods(lot.Name, lot.Picture);
-                result.Goods.Add(t);
+                result.Goods.Add(lot);
             }
             Server.Send(request.Client, result.Save());
         }
-
-        /*private static void GetShopLots(RequestHolder request) // [1]-[infinity]tags
-        {
-            string result = string.Empty;
-            List<Image> images = new List<Image>();
-
-            string[] tags = new string[request.Command.Length - 1]; // getting tags
-
-            foreach (ShopLot lot in DataForWrappers.Shop.GetShopLots(tags)) // refactor list of results
-            {
-                result += lot.Name;
-                result += Environment.NewLine;
-                Image temp = MyDb.GetData<Image>(lot.Name);
-                images.Add(temp);
-            }
-
-            Server.SendAnswer(request.Client, Server.CreateAnswer("Complete",
-                result), images);
-        }*/
 
         private static void Refill(RequestHolder request) // [1]sum [2]my_account_name [3]verify
         {

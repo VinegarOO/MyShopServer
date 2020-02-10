@@ -1,6 +1,6 @@
 ﻿namespace ShopLib
 {
-    interface ISaveable
+    public interface ISaveable
     {
         byte[] Save();
 

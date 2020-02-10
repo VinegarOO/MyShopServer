@@ -2,75 +2,74 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.Serialization.Formatters.Binary;
+using ShopLib;
 
 namespace ShopServerMain.core.wrappers.DB
 {
     public static class MyDb
     {
-        private static readonly BinaryFormatter Bf = new BinaryFormatter();
         private static Object locker = new object();
 
-        public static bool AddData(object data, string name)
+        public static bool AddData(ISaveable data, string name)
         {
             Type dataType = data.GetType();
             string path = $"{dataType.Name}//{name}.shda";
 
-            if (dataType.IsSerializable)
+            if (GetListOfData(dataType).Contains(name))
             {
-                if (GetListOfData(dataType).Contains(name))
-                {
-                    return false;
-                }
-
-                lock (locker)
-                {
-                    if (!Directory.Exists(dataType.Name))
-                    {
-                        Directory.CreateDirectory(dataType.Name + "//");
-                    }
-                
-                    FileStream fs = new FileStream(path, FileMode.CreateNew);
-                    Bf.Serialize(fs, data);
-                    fs.Dispose();
-                }
-
-                return true;
+                return false;
             }
-            return false;
+
+            lock (locker)
+            {
+                if (!Directory.Exists(dataType.Name))
+                {
+                    Directory.CreateDirectory(dataType.Name + "//");
+                }
+
+                using (FileStream fs = new FileStream(path, FileMode.CreateNew))
+                {
+                    var buffer = data.Save();
+                    int l = (int) buffer.Length;
+                    fs.Write(buffer, 0 , l);
+                }
+            }
+
+            return true;
         }
 
-        public static T GetData<T> (string name) where T : class
+        public static byte[] GetData (string name, string Type)
         {
-            Type dataType = typeof(T);
-            T result = null;
-            string path = $"{dataType.Name}//{name}.shda";
+            byte[] result;
+            string path = $"{Type}//{name}.shda";
 
-            if (dataType.IsSerializable && Directory.Exists(dataType.Name))
+            if (Directory.Exists(Type))
             {
                 if (!File.Exists(path))
                 {
-                    return null;
+                    throw new FileNotFoundException();
                 }
 
                 lock (locker)
                 {
-                    FileStream fs = new FileStream(path, FileMode.Open);
-                    result = (T)Bf.Deserialize(fs);
-                    fs.Dispose();
+                    using (FileStream fs = new FileStream(path, FileMode.Open))
+                    {
+                        int l = (int)fs.Length;
+                        result = new byte[l];
+                        fs.Read(result, 0, l);
+                    }
                 }
 
                 return result;
             }
-            return null;
+            throw new FileNotFoundException();
         }
 
-        public static bool RemoveData(object data, string name)
+        public static bool RemoveData(string name, string Type)
         {
-            Type dataType = data.GetType();
-            string path = $"{dataType.Name}//{name}.shda";
+            string path = $"{Type}//{name}.shda";
 
-            if (Directory.Exists(dataType.Name))
+            if (Directory.Exists(Type))
             {
                 if (File.Exists(path))
                 {
@@ -92,13 +91,13 @@ namespace ShopServerMain.core.wrappers.DB
             return true;
         }
 
-        public static bool UpdateData(object data, string name)
+        public static bool UpdateData(ISaveable data, string name)
         {
             Type dataType = data.GetType();
 
             lock (locker)
             {
-                if (RemoveData(data, name))
+                if (RemoveData(name, dataType.Name))
                 {
                     return AddData(data, name);
                 }
