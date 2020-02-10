@@ -7,10 +7,10 @@ namespace ShopLib
 {
     public class Account : ISaveable
     {
-        public string Name { get; private set; }
-        public int AccessRight { get; set; }
-        private string _password;
-        private long _money;
+        public string Name;
+        public int AccessRight;
+        public string _password;
+        public long _money;
 
         public virtual byte[] Save()
         {

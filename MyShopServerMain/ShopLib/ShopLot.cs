@@ -7,10 +7,10 @@ namespace ShopLib
 {
     public class ShopLot : ISaveable
     {
-        public string Name { get; private set; }
-        public long Price { get; private set; }
-        public string About { get; private set; }
-        public byte[] Picture { get; private set; }
+        public string Name;
+        public long Price;
+        public string About;
+        public byte[] Picture;
 
         public virtual byte[] Save()
         {

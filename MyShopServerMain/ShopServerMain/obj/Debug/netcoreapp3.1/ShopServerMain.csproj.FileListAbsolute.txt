@@ -1,0 +1,3 @@
+F:\Max\my code\MyShopServer\MyShopServerMain\ShopServerMain\obj\Debug\netcoreapp3.1\ShopServerMain.csprojAssemblyReference.cache
+F:\Max\my code\MyShopServer\MyShopServerMain\ShopServerMain\obj\Debug\netcoreapp3.1\ShopServerMain.AssemblyInfoInputs.cache
+F:\Max\my code\MyShopServer\MyShopServerMain\ShopServerMain\obj\Debug\netcoreapp3.1\ShopServerMain.AssemblyInfo.cs
