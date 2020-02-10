@@ -1,6 +1,6 @@
-﻿using MyShopServerMain.core.wrappers.console;
+﻿using ShopServerMain.core.wrappers.console;
 
-namespace MyShopServerMain
+namespace ShopServerMain
 {
     internal class Program
     {

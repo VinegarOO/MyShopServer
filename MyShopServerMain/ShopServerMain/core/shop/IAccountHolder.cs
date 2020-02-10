@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace MyShopServerMain.core.shop
+namespace ShopServerMain.core.shop
 {
     internal interface IAccountHolder
     {

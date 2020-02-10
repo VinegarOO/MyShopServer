@@ -1,7 +1,4 @@
-using System.Drawing;
-using MyShopServerMain.core.wrappers.DB;
-
-namespace MyShopServerMain.core.shop
+namespace ShopServerMain.core.shop
 {
     public class ThumbGoods : ShopLib.ThumbGoods
     {

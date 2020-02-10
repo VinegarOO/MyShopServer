@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace MyShopServerMain.core.wrappers.server
+namespace ShopServerMain.core.wrappers.server
 {
     internal class RequestHolder
     {

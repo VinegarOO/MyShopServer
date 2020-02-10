@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 
-namespace MyShopServerMain.core.wrappers.DB
+namespace ShopServerMain.core.wrappers.DB
 {
     public static class MyDb
     {

@@ -5,10 +5,10 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading;
-using MyShopServerMain.core.shop;
-using MyShopServerMain.core.wrappers.server;
+using ShopServerMain.core.shop;
+using ShopServerMain.core.wrappers.server;
 
-namespace MyShopServerMain.core.wrappers
+namespace ShopServerMain.core.wrappers
 {
     class DataForWrappers
     {

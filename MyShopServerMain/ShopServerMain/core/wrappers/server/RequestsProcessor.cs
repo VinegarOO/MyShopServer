@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Net;
-using System.Runtime.InteropServices;
 using System.Threading;
-using MyShopServerMain.core.shop;
-using MyShopServerMain.core.wrappers.DB;
+using ShopServerMain.core.shop;
 
-namespace MyShopServerMain.core.wrappers.server
+namespace ShopServerMain.core.wrappers.server
 {
     internal static class RequestsProcessor
     {

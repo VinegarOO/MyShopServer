@@ -1,4 +1,4 @@
-﻿namespace MyShopServerMain.core.shop
+﻿namespace ShopServerMain.core.shop
 {
     internal enum AccessRights
     {

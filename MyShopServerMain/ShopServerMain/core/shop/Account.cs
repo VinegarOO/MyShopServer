@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MyShopServerMain.core.shop
+namespace ShopServerMain.core.shop
 {
     [Serializable]
     internal class Account : ShopLib.Account

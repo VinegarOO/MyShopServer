@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
-using MyShopServerMain.core.wrappers.DB;
+using ShopServerMain.core.wrappers.DB;
 
-namespace MyShopServerMain.core.shop
+namespace ShopServerMain.core.shop
 {
     [Serializable]
     internal class Shop : IShop, IAccountHolder

@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
-using MyShopServerMain.core.shop;
-using static MyShopServerMain.core.wrappers.DataForWrappers;
+using ShopServerMain.core.shop;
+using static ShopServerMain.core.wrappers.DataForWrappers;
 
-namespace MyShopServerMain.core.wrappers.console
+namespace ShopServerMain.core.wrappers.console
 {
     public static class UserInterface
     {

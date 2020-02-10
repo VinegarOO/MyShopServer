@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 
-namespace MyShopServerMain.core.wrappers.server
+namespace ShopServerMain.core.wrappers.server
 {
     static class Server
     {

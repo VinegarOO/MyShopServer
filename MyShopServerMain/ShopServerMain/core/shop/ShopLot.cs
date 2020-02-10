@@ -1,9 +1,7 @@
 ﻿using System;
 using System.IO;
-using MyShopServerMain.core.wrappers.DB;
-using System.Drawing;
 
-namespace MyShopServerMain.core.shop
+namespace ShopServerMain.core.shop
 {
     [Serializable]
     public class ShopLot : ShopLib.ShopLot
@@ -30,10 +28,7 @@ namespace MyShopServerMain.core.shop
                 Picture = new byte[fs.Length];
                 fs.Read(Picture, 0, (int)fs.Length);
             }
-            System.Drawing temp = Image.FromFile(picturePath);
-            temp = temp.GetThumbnailImage(100, 100
-                , new Image.GetThumbnailImageAbort(ThumbnailCallback), IntPtr.Zero);
-            MyDb.AddData(temp, Name);
+
 
             if (tPrice > 0)
             {
