@@ -8,49 +8,47 @@ namespace ShopServerMain.core.wrappers.DB
 {
     public static class MyDb
     {
-        private static Object locker = new object();
+        private static Object _locker = new object();
 
-        public static bool AddData(ISaveable data, string name)
+        public static bool AddData(byte[] data, string name, string type)
         {
-            Type dataType = data.GetType();
-            string path = $"{dataType.Name}//{name}.shda";
+            string path = $"{type}//{name}.shda";
 
-            if (GetListOfData(dataType).Contains(name))
+            if (GetListOfData(type).Contains(name))
             {
                 return false;
             }
 
-            lock (locker)
+            lock (_locker)
             {
-                if (!Directory.Exists(dataType.Name))
+                if (!Directory.Exists(type))
                 {
-                    Directory.CreateDirectory(dataType.Name + "//");
+                    Directory.CreateDirectory(type + "//");
                 }
 
                 using (FileStream fs = new FileStream(path, FileMode.CreateNew))
                 {
-                    var buffer = data.Save();
-                    int l = (int) buffer.Length;
-                    fs.Write(buffer, 0 , l);
+                    int l = (int) data.Length;
+                    fs.Write(data, 0 , l);
                 }
             }
 
             return true;
         }
 
-        public static byte[] GetData (string name, string Type)
+        public static byte[] GetData (string name, string type)
         {
             byte[] result;
-            string path = $"{Type}//{name}.shda";
+            string path = $"{type}//{name}.shda";
 
-            if (Directory.Exists(Type))
+            if (Directory.Exists(type))
             {
                 if (!File.Exists(path))
                 {
                     throw new FileNotFoundException();
                 }
 
-                lock (locker)
+                lock (_locker)
                 {
                     using (FileStream fs = new FileStream(path, FileMode.Open))
                     {
@@ -65,15 +63,15 @@ namespace ShopServerMain.core.wrappers.DB
             throw new FileNotFoundException();
         }
 
-        public static bool RemoveData(string name, string Type)
+        public static bool RemoveData(string name, string type)
         {
-            string path = $"{Type}//{name}.shda";
+            string path = $"{type}//{name}.shda";
 
-            if (Directory.Exists(Type))
+            if (Directory.Exists(type))
             {
                 if (File.Exists(path))
                 {
-                    lock (locker)
+                    lock (_locker)
                     {
                         File.Delete(path);
                     }
@@ -91,15 +89,13 @@ namespace ShopServerMain.core.wrappers.DB
             return true;
         }
 
-        public static bool UpdateData(ISaveable data, string name)
+        public static bool UpdateData(byte[] data, string name, string type)
         {
-            Type dataType = data.GetType();
-
-            lock (locker)
+            lock (_locker)
             {
-                if (RemoveData(name, dataType.Name))
+                if (RemoveData(name, type))
                 {
-                    return AddData(data, name);
+                    return AddData(data, name, type);
                 }
                 else
                 {
@@ -108,18 +104,18 @@ namespace ShopServerMain.core.wrappers.DB
             }
         }
 
-        public static List<string> GetListOfData(Type typeOfData)
+        public static List<string> GetListOfData(string typeOfData)
         {
             List<string> result = new List<string>();
-            string path = $"{typeOfData.Name}//";
+            string path = $"{typeOfData}//";
             
-            if (Directory.Exists(typeOfData.Name))
+            if (Directory.Exists(typeOfData))
             {
                 result = Directory.GetFiles(path).ToList();
 
                 foreach (var name in result)
                 {
-                    lock (locker)
+                    lock (_locker)
                     {
                         if (name.EndsWith(".shda"))
                         {

@@ -67,7 +67,7 @@ namespace ShopServerMain.core.shop
             About = tAbout;
         }
 
-        internal ThumbGoods getThumbGoods()
+        internal ThumbGoods GetThumbGoods()
         {
             Image image;
             using (MemoryStream ms = new MemoryStream(Picture))

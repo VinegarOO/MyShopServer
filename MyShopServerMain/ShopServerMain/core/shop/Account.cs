@@ -7,22 +7,22 @@ namespace ShopServerMain.core.shop
     {
         internal Account(string name, string newPassword, AccessRights newAccessRight = AccessRights.User)
         {
-            _password = newPassword;
+            Password = newPassword;
             Name = name;
-            _money = 0;
+            Money = 0;
             AccessRight = (int)newAccessRight;
         }
 
         internal bool Verify(string tPassword)
         {
-            return tPassword == _password;
+            return tPassword == Password;
         }
 
         internal void ChangePassword(string newPassword, string tPassword)
         {
-            if (tPassword == _password)
+            if (tPassword == Password)
             {
-                _password = newPassword;
+                Password = newPassword;
             }
             else
             {
@@ -36,7 +36,7 @@ namespace ShopServerMain.core.shop
             {
                 if (adminAccount.Verify(aPassword))
                 {
-                    _password = newPassword;
+                    Password = newPassword;
                 }
                 else
                 {
@@ -51,15 +51,15 @@ namespace ShopServerMain.core.shop
 
         internal void Withdraw(long sum, string tPassword)
         {
-            if (tPassword == _password)
+            if (tPassword == Password)
             {
                 if (sum < 0)
                 {
                     throw new ArgumentException("you can't withdraw sum below zero");
                 }
-                if (_money >= sum)
+                if (Money >= sum)
                 {
-                    _money -= sum;
+                    Money -= sum;
                 }
                 else
                 {
@@ -82,9 +82,9 @@ namespace ShopServerMain.core.shop
                 }
                 if (account.Verify(aPassword))
                 {
-                    if (_money >= sum)
+                    if (Money >= sum)
                     {
-                        _money -= sum;
+                        Money -= sum;
                     }
                     else
                     {
@@ -112,7 +112,7 @@ namespace ShopServerMain.core.shop
                 }
                 if (aAccount.Verify(aPassword))
                 {
-                    _money += sum;
+                    Money += sum;
                 }
                 else
                 {
@@ -152,7 +152,7 @@ namespace ShopServerMain.core.shop
         {
             string result = String.Empty;
             result += $"Name: {Name}" + Environment.NewLine;
-            result += $"State of account: {_money}" + Environment.NewLine;
+            result += $"State of account: {Money}" + Environment.NewLine;
             result += $"AccessRights: {(AccessRights)AccessRight}";
             return result;
         }

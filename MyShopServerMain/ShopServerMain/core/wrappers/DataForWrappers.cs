@@ -18,9 +18,10 @@ namespace ShopServerMain.core.wrappers
         internal static ConcurrentQueue<RequestHolder> Requests = new ConcurrentQueue<RequestHolder>();
         internal static ConcurrentQueue<AnswerHolder> Answers = new ConcurrentQueue<AnswerHolder>();
         internal static List<Thread> Threads = new List<Thread>();
-        internal const string ServerIPAddres = "127.0.0.1";
+        internal const string ServerIpAddres = "127.0.0.1";
         internal const int SenderPort = 703;
         internal const int ServerPort = 708;
+        internal const int MaxSizeOfShopLot = 1048576;
 
         static DataForWrappers()
         {
@@ -42,7 +43,7 @@ namespace ShopServerMain.core.wrappers
 
 
 
-            DataForWrappers.Shop = new Shop("shopName"); // load or create shop
+            DataForWrappers.Shop = new Shop(); // load or create shop
 
         }
     }

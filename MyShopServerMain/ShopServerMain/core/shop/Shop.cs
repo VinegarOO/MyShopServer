@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using ShopServerMain.core.wrappers;
 using ShopServerMain.core.wrappers.DB;
 
 namespace ShopServerMain.core.shop
@@ -9,27 +10,16 @@ namespace ShopServerMain.core.shop
     [Serializable]
     internal class Shop : IShop, IAccountHolder
     {
-        internal readonly string Name;
-
-        public Shop(string tName)
-        {
-            if (tName == null)
-            {
-                throw new NullReferenceException("Name can't be null");
-            }
-
-            if (tName == string.Empty)
-            {
-                throw new NullReferenceException("Name can't be blank");
-            }
-            Name = tName;
-        }
-
         public void AddShopLot(ShopLot lot)
         {
-            if (this.GetShopLot(lot.Name) != null)
+            if (GetShopLot(lot.Name) != null)
             {
-                bool result = MyDb.AddData(lot, null);
+                var temp = lot.Save();
+                if (temp.Length > DataForWrappers.MaxSizeOfShopLot)
+                {
+                    throw new ArgumentException("Image too large");
+                }
+                bool result = MyDb.AddData(temp, lot.Name, "ShopLot");
                 if (!result)
                 {
                     throw new ArgumentException("Goods is already exists");
@@ -43,7 +33,7 @@ namespace ShopServerMain.core.shop
 
         public void UpdateShopLot(ShopLot shopLot)
         {
-            if (!MyDb.UpdateData(shopLot, shopLot.Name))
+            if (!MyDb.UpdateData(shopLot.Save(), shopLot.Name, "ShopLot"))
             {
                 throw new ArgumentException("Goods is already exists");
             }
@@ -59,14 +49,14 @@ namespace ShopServerMain.core.shop
 
         public List<ThumbGoods> GetShopLots()
         {
-            List<string> listOfData = MyDb.GetListOfData(typeof(ShopLot));
+            List<string> listOfData = MyDb.GetListOfData("ShopLot");
             
             List<ThumbGoods> result = new List<ThumbGoods>();
 
             foreach (var data in listOfData)
             {
                 var t = GetShopLot(data);
-                result.Add(t.getThumbGoods());
+                result.Add(t.GetThumbGoods());
             }
             
             return result;
@@ -83,11 +73,11 @@ namespace ShopServerMain.core.shop
         public override string ToString()
         {
             string result = string.Empty;
-            foreach(var t in MyDb.GetListOfData(typeof(ShopLot)))
+            foreach(var t in MyDb.GetListOfData("ShopLot"))
             {
                 result += (t + Environment.NewLine);
             }
-            foreach(var t in MyDb.GetListOfData(typeof(Account)))
+            foreach(var t in MyDb.GetListOfData("Account"))
             {
                 result += (t + Environment.NewLine);
             }
@@ -101,7 +91,7 @@ namespace ShopServerMain.core.shop
                 throw new ArgumentNullException(account.Name, "Name can't be null");
             }
 
-            if (!MyDb.AddData(account, account.Name)) // check account name for exist
+            if (!MyDb.AddData(account.Save(), account.Name, "Account")) // check account name for exist
             {
                 throw new ArgumentException("This account name already exists");
             }
@@ -109,7 +99,7 @@ namespace ShopServerMain.core.shop
 
         public void UpdateAccount(Account account)
         {
-            if (!MyDb.UpdateData(account, account.Name))
+            if (!MyDb.UpdateData(account.Save(), account.Name, "Account"))
             {
                 throw new ArgumentException("Account is already exists");
             }
@@ -125,7 +115,7 @@ namespace ShopServerMain.core.shop
 
         public List<string> GetAccounts()
         {
-            return MyDb.GetListOfData(typeof(Account));
+            return MyDb.GetListOfData("Account");
         }
 
         public Account GetAccount(string name)

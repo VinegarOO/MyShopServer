@@ -9,8 +9,8 @@ namespace ShopLib
     {
         public string Name;
         public int AccessRight;
-        public string _password;
-        public long _money;
+        public string Password;
+        public long Money;
 
         public virtual byte[] Save()
         {
@@ -22,11 +22,11 @@ namespace ShopLib
             result = result.Concat(BitConverter.GetBytes(buffer.Length));
             result = result.Concat(buffer);
 
-            buffer = Encoding.UTF8.GetBytes(_password);
+            buffer = Encoding.UTF8.GetBytes(Password);
             result = result.Concat(BitConverter.GetBytes(buffer.Length));
             result = result.Concat(buffer);
 
-            buffer = BitConverter.GetBytes(_money);
+            buffer = BitConverter.GetBytes(Money);
             result = result.Concat(BitConverter.GetBytes(buffer.Length));
             result = result.Concat(buffer);
 
@@ -50,12 +50,12 @@ namespace ShopLib
 
             size = BitConverter.ToInt32(data, position);
             position += 4;
-            _password = Encoding.UTF8.GetString(data, position, size);
+            Password = Encoding.UTF8.GetString(data, position, size);
             position += size;
 
             size = BitConverter.ToInt32(data, position);
             position += 4;
-            _money = BitConverter.ToInt64(data, position);
+            Money = BitConverter.ToInt64(data, position);
 
             return true;
         }
