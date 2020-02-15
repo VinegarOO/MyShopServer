@@ -9,16 +9,14 @@ namespace ShopServerMain.core.wrappers.server
     {
         internal static void WaitingConnection()
         {
-            Socket rSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            EndPoint endPoint = new IPEndPoint(IPAddress.Parse(DataForWrappers.ServerIPAddres)
+            UdpClient rUdpClient = new UdpClient(DataForWrappers.ServerPort);
+            IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse(DataForWrappers.ServerIpAddres)
                 , DataForWrappers.ServerPort);
-            rSocket.Bind(endPoint);
 
             while (true)
             {
                 // getting request
-                byte[] request = new byte[1024];
-                rSocket.ReceiveFrom(request, ref endPoint);
+                byte[] request = rUdpClient.Receive(ref endPoint);
 
                 // process request
                 var t = new RequestHolder(endPoint, request);
@@ -29,7 +27,7 @@ namespace ShopServerMain.core.wrappers.server
 
         internal static void SendingAnswer()
         {
-            Socket aSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+            UdpClient aUdpClient = new UdpClient();
 
             while (true)
             {
@@ -41,13 +39,11 @@ namespace ShopServerMain.core.wrappers.server
                 }
                 
                 // Sending answer
-                aSocket.SendTo(BitConverter.GetBytes(answer.Answer.Length), answer.Client);
-                Thread.Sleep(10);
-                aSocket.SendTo(answer.Answer, answer.Client);
+                aUdpClient.Send(answer.Answer, answer.Answer.Length, answer.Client);
             }
         }
 
-        public static void Send(EndPoint client, byte[] message)
+        public static void Send(IPEndPoint client, byte[] message)
         {
             DataForWrappers.Answers.Enqueue(new AnswerHolder(client, message));
         }

@@ -4,10 +4,10 @@ namespace ShopServerMain.core.wrappers.server
 {
     public class AnswerHolder
     {
-        internal readonly EndPoint Client = null;
+        internal readonly IPEndPoint Client = null;
         internal readonly byte[] Answer = null;
 
-        internal AnswerHolder(EndPoint tClient, byte[] tAnswer)
+        internal AnswerHolder(IPEndPoint tClient, byte[] tAnswer)
         {
             Client = tClient;
             Answer = tAnswer;
