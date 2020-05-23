@@ -265,8 +265,9 @@ namespace ShopServerMain.core.wrappers.console
                                 Console.WriteLine("passwords isn't similar");
                             }
 
-                            Console.WriteLine("print admin password"); // getting admin password
-                            var aPassword = Console.ReadLine();
+                            /*Console.WriteLine("print admin password"); // getting admin password
+                            var aPassword = Console.ReadLine();*/
+                            var aPassword = AdminPassword;
 
                             try  // changing password
                             {
@@ -326,8 +327,10 @@ namespace ShopServerMain.core.wrappers.console
 
                             try // changing access rights
                             {
-                                Console.WriteLine("print admin password");
-                                string aPassword = Console.ReadLine();
+                                /*Console.WriteLine("print admin password"); // getting admin password
+                                var aPassword = Console.ReadLine();*/
+                                var aPassword = AdminPassword;
+
                                 account.ChangeAccessRights(accessRights, AdminAccount, aPassword);
                             }
                             catch (Exception e)
@@ -355,8 +358,9 @@ namespace ShopServerMain.core.wrappers.console
                                 }
                             }
 
-                            Console.WriteLine("print admin password");
-                            string aPassword = Console.ReadLine();
+                            /*Console.WriteLine("print admin password"); // getting admin password
+                            var aPassword = Console.ReadLine();*/
+                            var aPassword = AdminPassword;
 
                             if (sum > 0) // refill/withdraw
                             {
