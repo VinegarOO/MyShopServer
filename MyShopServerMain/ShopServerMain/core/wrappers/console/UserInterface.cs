@@ -430,11 +430,39 @@ namespace ShopServerMain.core.wrappers.console
                     
                     Console.WriteLine("What parameter do you want to change");
                     Console.WriteLine("You can change:" + Environment.NewLine +
-                                      "Picture" + Environment.NewLine +
+                                      //"Picture" + Environment.NewLine +
                                       "Price" + Environment.NewLine +
                                       "Description - About");
                     switch (Console.ReadLine())
                     {
+                        /*case "Picture":
+                        {
+                            string picturePath; // getting picture
+                            while (true)
+                            {
+                                Console.WriteLine("print path to the picture");
+                                picturePath = Console.ReadLine();
+                                if (File.Exists(picturePath))
+                                {
+                                    break;
+                                }
+
+                                Console.WriteLine("wrong path");
+                            }
+
+                            try // changing price
+                            {
+                                shopLot.Picture;
+                            }
+                            catch (Exception e)
+                            {
+                                Console.WriteLine(e.Message);
+                                return;
+                            }
+
+                            break;
+                        }*/
+
                         case "Price":
                         {
                             long price; // getting price and convert to decimal
