@@ -12,7 +12,7 @@ namespace ShopServerMain.core.wrappers.server
 
         internal static void ProcessRequest()
         {
-            while (true)
+            while (DataForWrappers.Stop)
             {
                 RequestHolder request;
 

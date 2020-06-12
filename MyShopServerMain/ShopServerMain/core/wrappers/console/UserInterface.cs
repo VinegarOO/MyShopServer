@@ -41,6 +41,7 @@ namespace ShopServerMain.core.wrappers.console
 
         private static void Start()
         {
+            DataForWrappers.Stop = true;
             if (!Server.IsAlive) Server.Start();
             if (!Sender.IsAlive) Sender.Start();
             Sender.Priority = ThreadPriority.Highest;
@@ -620,13 +621,15 @@ namespace ShopServerMain.core.wrappers.console
 
         private static void Stop()
         {
-            if(Server.IsAlive) Server.Abort();
-            if(Sender.IsAlive) Sender.Abort();
+            DataForWrappers.Stop = false;
+            /*if(Server.IsAlive) Server.Abort();
+            if(Sender.IsAlive) Sender.Abort();*/
             Console.WriteLine("Stopping server");
-            foreach (var thread in DataForWrappers.Threads)
+            /*foreach (var thread in DataForWrappers.Threads)
             {
                 if(thread.IsAlive) thread.Abort();
-            }
+            }*/
+            DataForWrappers.Threads = new List<Thread>();
         }
 
         private static void Exit()
