@@ -41,7 +41,12 @@ namespace ShopServerMain.core.wrappers.console
 
         private static void Start()
         {
-            DataForWrappers.Stop = true;
+            if (DataForWrappers.ServerWorkingFlag)
+            {
+                Console.WriteLine("Server is already working");
+                return;
+            }
+            DataForWrappers.ServerWorkingFlag = true;
             if (!Server.IsAlive) Server.Start();
             if (!Sender.IsAlive) Sender.Start();
             Sender.Priority = ThreadPriority.Highest;
@@ -621,7 +626,7 @@ namespace ShopServerMain.core.wrappers.console
 
         private static void Stop()
         {
-            DataForWrappers.Stop = false;
+            DataForWrappers.ServerWorkingFlag = false;
             /*if(Server.IsAlive) Server.Abort();
             if(Sender.IsAlive) Sender.Abort();*/
             Console.WriteLine("Stopping server");

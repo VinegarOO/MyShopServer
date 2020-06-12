@@ -11,7 +11,7 @@ namespace ShopServerMain.core.wrappers
     class DataForWrappers
     {
         internal static readonly Shop Shop;
-        internal static bool Stop;
+        internal static bool ServerWorkingFlag;
         internal static string[] TerminalCommand;
         internal static readonly Account AdminAccount;
         internal const string AdminPassword = "qwerty";

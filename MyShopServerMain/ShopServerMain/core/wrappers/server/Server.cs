@@ -13,7 +13,7 @@ namespace ShopServerMain.core.wrappers.server
             IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse(DataForWrappers.ServerIpAddres)
                 , DataForWrappers.ServerPort);
 
-            while (DataForWrappers.Stop)
+            while (DataForWrappers.ServerWorkingFlag)
             {
                 // getting request
                 byte[] request = rUdpClient.Receive(ref endPoint);
@@ -29,7 +29,7 @@ namespace ShopServerMain.core.wrappers.server
         {
             UdpClient aUdpClient = new UdpClient();
 
-            while (DataForWrappers.Stop)
+            while (DataForWrappers.ServerWorkingFlag)
             {
                 AnswerHolder answer;
                 
