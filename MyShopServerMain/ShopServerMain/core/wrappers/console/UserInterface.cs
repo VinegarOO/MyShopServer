@@ -184,7 +184,7 @@ namespace ShopServerMain.core.wrappers.console
                         }
                     }
 
-                    string[] tags; // getting price
+                    /*string[] tags; // getting price
                     while (true)
                     {
                         try
@@ -201,7 +201,7 @@ namespace ShopServerMain.core.wrappers.console
                         {
                             Console.WriteLine("wrong input");
                         }
-                    }
+                    }*/
 
                     ShopLot shopLot = new ShopLot(TerminalCommand[2], picturePath, about, price);
 
@@ -450,13 +450,14 @@ namespace ShopServerMain.core.wrappers.console
                                 picturePath = Console.ReadLine();
                                 if (File.Exists(picturePath))
                                 {
+                                    //here must be code for changing picture
                                     break;
                                 }
 
                                 Console.WriteLine("wrong path");
                             }
 
-                            try // changing price
+                            try // changing picture
                             {
                                 shopLot.Picture;
                             }
